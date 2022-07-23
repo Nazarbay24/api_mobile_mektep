@@ -19,10 +19,17 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
     Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 
     Route::group(['middleware' => ['jwt.verify']], function() {
-        Route::post('/account-choice', [\App\Http\Controllers\AuthController::class, 'accountChoice']);
+        Route::get('/get-school', [\App\Http\Controllers\AuthController::class, 'getSchool']);
+
+        Route::get('/choice-school/{id}', [\App\Http\Controllers\AuthController::class, 'choiceSchool'])->where('id', '[0-9]+');
     });
 
 });
 
+//Route::prefix('{locale}')->group(function () {
+//    Route::get('/choice-school/{id}', [\App\Http\Controllers\AuthController::class, 'choiceSchool']);
+//});
+//
+//Route::get('/choice-school/{id}', [\App\Http\Controllers\AuthController::class, 'choiceSchool']);
 
 

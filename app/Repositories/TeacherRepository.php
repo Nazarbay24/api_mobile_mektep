@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Mektep;
 use App\Models\Teacher as Model;
 use App\Models\User;
 use Illuminate\Notifications\Notifiable;
@@ -18,28 +19,11 @@ class TeacherRepository {
 
     public function login($iin, $password) {
         $userAccounts = $this->model
-            ->select('mektep_teacher.id as id',
-                    'id_mektep',
-                    'name',
-                    'surname',
-                    'lastname',
-                    'iin',
-                    'parol',
-                    'birthday',
-                    'pol',
-                    'specialty',
-                    'mektepter.bin as bin',
-                    'mektepter.name_kaz as mektep_name_kaz',
-                    'mektepter.name_rus as mektep_name_rus',
-                    'edu_punkt.oblast_kaz as oblast_kaz',
-                    'edu_punkt.oblast_rus as oblast_rus',
-                    'edu_punkt.punkt_kaz as punkt_kaz',
-                    'edu_punkt.punkt_rus as punkt_rus')
-            ->join('mektepter', $this->model->table.'.id_mektep', '=', 'mektepter.id')
-            ->join('edu_punkt', 'mektepter.edu_punkt', '=', 'edu_punkt.id')
             ->where('iin', $iin)
+            ->where('status', 1)
+            ->where('blocked', 0)
+            ->where('id_mektep', '>', 0)
             ->get()->all();
-
 
         foreach ($userAccounts as $user) {
             if ($user->parol == $password) return $userAccounts;
@@ -48,30 +32,27 @@ class TeacherRepository {
         return false;
     }
 
-    public function accountChoice($iin, $id_mektep)
+    public function getSchool()
     {
         return $this->model
-            ->select('mektep_teacher.id as id',
-            'id_mektep',
-            'name',
-            'surname',
-            'lastname',
-            'iin',
-            'parol',
-            'birthday',
-            'pol',
-            'specialty',
-            'mektepter.bin as bin',
-            'mektepter.name_kaz as mektep_name_kaz',
-            'mektepter.name_rus as mektep_name_rus',
-            'edu_punkt.oblast_kaz as oblast_kaz',
-            'edu_punkt.oblast_rus as oblast_rus',
-            'edu_punkt.punkt_kaz as punkt_kaz',
-            'edu_punkt.punkt_rus as punkt_rus')
+            ->select('id_mektep as id',
+                'specialty',
+                'mektepter.name_kaz as name_kk',
+                'mektepter.name_rus as name_ru',
+                'edu_punkt.oblast_kaz as oblast_kk',
+                'edu_punkt.oblast_rus as oblast_ru',
+                'edu_punkt.punkt_kaz as punkt_kk',
+                'edu_punkt.punkt_rus as punkt_ru')
             ->join('mektepter', $this->model->table.'.id_mektep', '=', 'mektepter.id')
             ->join('edu_punkt', 'mektepter.edu_punkt', '=', 'edu_punkt.id')
-            ->where('iin', $iin)
-            ->where('id_mektep', $id_mektep)
+            ->where('iin', auth()->user()->iin)
+            ->get()->all();
+    }
+
+    public function choiceSchool($id) {
+        return $this->model
+            ->where('iin', auth()->user()->iin)
+            ->where('id_mektep', $id)
             ->first();
     }
 }
