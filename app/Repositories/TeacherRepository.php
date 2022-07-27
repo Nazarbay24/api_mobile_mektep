@@ -2,9 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Mektep;
 use App\Models\Teacher as Model;
-use App\Models\User;
 use Illuminate\Notifications\Notifiable;
 
 class TeacherRepository {
@@ -16,6 +14,7 @@ class TeacherRepository {
     {
         $this->model = $model;
     }
+
 
     public function login($iin, $password) {
         $userAccounts = $this->model
@@ -32,11 +31,13 @@ class TeacherRepository {
         return false;
     }
 
-    public function getSchool()
+
+    public function getSchools()
     {
         return $this->model
             ->select('id_mektep as id',
                 'specialty',
+                'pol',
                 'mektepter.name_kaz as name_kk',
                 'mektepter.name_rus as name_ru',
                 'edu_punkt.oblast_kaz as oblast_kk',
@@ -46,13 +47,18 @@ class TeacherRepository {
             ->join('mektepter', $this->model->table.'.id_mektep', '=', 'mektepter.id')
             ->join('edu_punkt', 'mektepter.edu_punkt', '=', 'edu_punkt.id')
             ->where('iin', auth()->user()->iin)
+            ->where('status', 1)
+            ->where('blocked', 0)
             ->get()->all();
     }
+
 
     public function choiceSchool($id) {
         return $this->model
             ->where('iin', auth()->user()->iin)
             ->where('id_mektep', $id)
+            ->where('status', 1)
+            ->where('blocked', 0)
             ->first();
     }
 }

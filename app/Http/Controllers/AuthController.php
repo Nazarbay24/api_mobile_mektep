@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Repositories\TeacherRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
 
 class AuthController extends Controller
 {
     protected $repository;
-    protected $lang;
 
-    public function __construct(TeacherRepository $repository, Request $request)
+    public function __construct(TeacherRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -24,7 +19,12 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $userAccounts = $this->repository->login($request->input('iin'), $request->input('password'));
+        $request->validate([
+            "iin" => "required|size:12",
+            "password" => "required"
+        ]);
+
+        $userAccounts = $this->repository->login(trim($request->input('iin')), trim($request->input('password')));
 
         if($userAccounts) {
             return response()->json([
@@ -32,6 +32,7 @@ class AuthController extends Controller
                 'name' => $userAccounts[0]->name,
                 'surname' => $userAccounts[0]->surname,
                 'lastname' => $userAccounts[0]->lastname,
+                'pol' => $userAccounts[0]->pol,
             ], 200);
         }
 
@@ -39,9 +40,9 @@ class AuthController extends Controller
     }
 
 
-    public function getSchool()
+    public function getSchools()
     {
-        $schools = $this->repository->getSchool();
+        $schools = $this->repository->getSchools();
 
         if ($schools) {
             return response()->json($schools, 200);
