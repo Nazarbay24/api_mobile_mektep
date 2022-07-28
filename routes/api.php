@@ -24,7 +24,11 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
         Route::get('/today-diary', [\App\Http\Controllers\DiaryController::class, 'todayDiary']);
 
-        Route::get('/subject/{id}', [\App\Http\Controllers\SubjectController::class, 'subject']);
+        Route::get('/subject/{id}', [\App\Http\Controllers\SubjectController::class, 'subject'])->where('id', '[0-9]+');
+
+        Route::get('/my-subjects', [\App\Http\Controllers\SubjectController::class, 'mySubjects']);
+
+        Route::get('/diary/{week}', [\App\Http\Controllers\DiaryController::class, 'diary']);
     });
 
 });

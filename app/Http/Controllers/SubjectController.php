@@ -19,6 +19,9 @@ class SubjectController extends Controller
 
 
     public function subject($locale, $id) {
+        $this->subjectRepository->init((int) auth()->user()->id_mektep);
+        $this->planRepository->init((int) auth()->user()->id_mektep);
+
         $subject = $this->subjectRepository->getSubject($id);
         $plan = $this->planRepository->getPlan($id);
 
@@ -28,5 +31,14 @@ class SubjectController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+
+    public function mySubjects() {
+        $this->subjectRepository->init((int) auth()->user()->id_mektep);
+
+        $subjects = $this->subjectRepository->mySubjects();
+
+        return response()->json($subjects, 200);
     }
 }

@@ -16,8 +16,21 @@ class DiaryController extends Controller
 
 
     public function todayDiary() {
+        $this->repository->init((int) auth()->user()->id_mektep);
+
         $diary = $this->repository->todayDiary();
 
         return response()->json($diary, 200);
+    }
+
+
+    public function diary($locale, $week) {
+        $this->repository->init((int) auth()->user()->id_mektep);
+
+        $diary = $this->repository->diary($week);
+
+
+
+        return $diary;
     }
 }

@@ -57,7 +57,7 @@ class AuthController extends Controller
     {
         $user = $this->repository->choiceSchool($id);
 
-        if ($user) return response()->json($user->generateAuthToken(), 200);
+        if ($user) return response()->json([  'token' => $user->generateAuthToken()], 200);
         else       return response()->json(['message' => __('Школа не найдена')], 404);
     }
 }

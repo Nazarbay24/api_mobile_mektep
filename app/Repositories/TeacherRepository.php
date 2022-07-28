@@ -37,7 +37,6 @@ class TeacherRepository {
         return $this->model
             ->select('id_mektep as id',
                 'specialty',
-                'pol',
                 'mektepter.name_kaz as name_kk',
                 'mektepter.name_rus as name_ru',
                 'edu_punkt.oblast_kaz as oblast_kk',

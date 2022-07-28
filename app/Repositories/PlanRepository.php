@@ -16,14 +16,25 @@ class PlanRepository
         $this->model = $model;
     }
 
+    public function init(int $id_mektep)
+    {
+        $this->model->init($id_mektep);
+    }
+
 
     public function getPlan($predmetId) {
-        return $this->model
-            ->select()
+        $plan = $this->model
+            ->select('title', 'sagat')
             ->where('mektep_predmet_id', '=', $predmetId)
             ->where('teacher_id', '=', auth()->user()->id)
             ->orderBy('id', 'asc')
             ->get()->all();
+
+        foreach ($plan as $key => $item) {
+            $plan[$key]['sagat'] = $item['sagat'].' '.__('ч.');
+        }
+
+        return $plan;
     }
 
 }

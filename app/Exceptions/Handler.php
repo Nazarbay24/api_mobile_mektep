@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App\Payloads\ErrorPayload;
+use App\Payloads\UnauthorizedPayload;
 
 class Handler extends ExceptionHandler
 {
@@ -33,5 +35,11 @@ class Handler extends ExceptionHandler
     public function register()
     {
         //
+        $this->renderable(function (Throwable $e) {
+            $r = new ErrorPayload(__($e->getMessage()));
+            $status = $r->getStatus();
+            if($e instanceof UnauthorizedException) $status = 401;
+            return response()->json($r->getData(), $status);
+        });
     }
 }
