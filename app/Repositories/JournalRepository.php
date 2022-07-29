@@ -98,6 +98,11 @@ class JournalRepository
             ->where('date', '<=', $chetvertDates[$chetvert]['end'])
             ->get()->all();
 
+        $journalMarks = [];
+        foreach ($journalMarksQuery as $item) {
+            $journalMarks[$item['jurnal_date']][$item['jurnal_lesson']]
+        }
+
 
         return $journalDates;
     }
