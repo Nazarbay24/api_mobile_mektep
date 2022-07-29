@@ -85,19 +85,14 @@ class DiaryRepository
 
         $todayInfo = [];
         $date = '2021-10-07'; //заменить на текущую дату date("Y-m-d")
-        $day = date('w', strtotime($date));
+        $dayOfWeek = date('w', strtotime($date));
+        $dayOfMonth = date('d', strtotime($date));
+        $month = date('m', strtotime($date));
         $todayInfo['date'] = $date;
         $todayInfo['current_time'] = date('H:i');
-        $todayInfo['day_number'] = $day;
-        switch ($day) {
-            case 1: $todayInfo['day'] = __('Понедельник'); break;
-            case 2: $todayInfo['day'] = __('Вторник');     break;
-            case 3: $todayInfo['day'] = __('Среда');       break;
-            case 4: $todayInfo['day'] = __('Четверг');     break;
-            case 5: $todayInfo['day'] = __('Пятница');     break;
-            case 6: $todayInfo['day'] = __('Суббота');     break;
-            case 0: $todayInfo['day'] = __('Воскресенье'); break;
-        }
+        $todayInfo['day_number'] = $dayOfWeek;
+        $todayInfo['day'] = __('d_'.$dayOfWeek).', '.ltrim($dayOfMonth, 0).' '.__('m_'.$month);
+
 
         return [
             "info" => $todayInfo,
@@ -161,19 +156,9 @@ class DiaryRepository
             $diaryArray[$key]['end_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['end_time'];
             $diaryArray[$key]['current_time'] = date('H:i');
 
-
-                $day = date('w', strtotime($item['date']));
-                $diaryArray[$key]['day_number'] = $day;
-                switch ($day) {
-                    case 1: $diaryArray[$key]['day'] = __('Понедельник'); break;
-                    case 2: $diaryArray[$key]['day'] = __('Вторник');     break;
-                    case 3: $diaryArray[$key]['day'] = __('Среда');       break;
-                    case 4: $diaryArray[$key]['day'] = __('Четверг');     break;
-                    case 5: $diaryArray[$key]['day'] = __('Пятница');     break;
-                    case 6: $diaryArray[$key]['day'] = __('Суббота');     break;
-                    case 0: $diaryArray[$key]['day'] = __('Воскресенье'); break;
-                }
-
+            $day = date('w', strtotime($item['date']));
+            $diaryArray[$key]['day_number'] = $day;
+            $diaryArray[$key]['day'] = __('d_'.$day);
         }
 
         return $diaryArray;
