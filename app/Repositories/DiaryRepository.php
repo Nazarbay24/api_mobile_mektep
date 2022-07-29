@@ -88,7 +88,7 @@ class DiaryRepository
         $dayOfWeek = date('w', strtotime($date));
         $dayOfMonth = date('d', strtotime($date));
         $month = date('m', strtotime($date));
-        $todayInfo['current_time'] = date('Y-m-d H:i:s');
+        $todayInfo['current_time'] = '2021-10-07 12:45:36'; //заменить на текущую дату date('Y-m-d H:i:s');
         $todayInfo['day_number'] = $dayOfWeek;
         $todayInfo['day'] = __('d_'.$dayOfWeek).', '.ltrim($dayOfMonth, 0).' '.__('m_'.$month);
 
