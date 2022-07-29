@@ -32,7 +32,7 @@ class DiaryRepository
         $diary = $this->model
             ->select(
                 $this->model->getTable().'.date',
-                $this->model->getTable().'.number',
+                $this->model->getTable().'.number as lesson_num',
                 $this->model->getTable().'.id_predmet',
                 $this->model->getTable().'.tema',
                 'mektep_class.class as class',
@@ -66,10 +66,7 @@ class DiaryRepository
     }
 
 
-    public function diary($week) {
-        $monday = date("Y-m-d", strtotime('monday '.$week.' week'));
-        $saturday = date("Y-m-d", strtotime('saturday '.($week+1).' week'));
-
+    public function diary($monday, $saturday) {
         $smenaQuery = DB::table('mektep_smena')
             ->where('id_mektep', '=', auth()->user()->id_mektep)
             ->get()->all();
@@ -84,7 +81,7 @@ class DiaryRepository
 
         $weekDiary = $this->model
             ->select('date',
-                    'number',
+                    'number as lesson_num',
                     'edu_predmet_name.predmet_'.$this->lang.' as predmet_name',
                     'mektep_class.class as class',
                     'mektep_class.group as group',
@@ -103,7 +100,14 @@ class DiaryRepository
             ->orderBy($this->model->getTable().'.id')
             ->get()->all();
 
-        return $this->setDiaryTimeAndClass($weekDiary);
+         $this->setDiaryTimeAndClass($weekDiary);
+
+         $weekDiaryFilteredByDay = [];
+         foreach ($weekDiary as $key => $item) {
+             $weekDiaryFilteredByDay[$item['day_number']] = $item;
+         }
+
+         return $weekDiaryFilteredByDay;
     }
 
 
@@ -116,7 +120,8 @@ class DiaryRepository
         $smenaTime = [];
         foreach ($smenaQuery as $item) {
             for ($i = 1; $i <= 10; $i++) {
-                $smenaTime[$item['smena']][$i] = $item['z'.$i.'_start'].' - '.$item['z'.$i.'_end'];
+                $smenaTime[$item['smena']][$i]['start_time'] = $item['z'.$i.'_start'];
+                $smenaTime[$item['smena']][$i]['end_time'] = $item['z'.$i.'_end'];
             }
         }
 
@@ -124,7 +129,9 @@ class DiaryRepository
             $diaryArray[$key]['class'] = $item['class'].'«'.$item['group'].'»';
             unset($diaryArray[$key]['group']);
 
-            $diaryArray[$key]['time'] = $smenaTime[$item['smena']][$item['number']];
+            $diaryArray[$key]['start_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['start_time'];
+            $diaryArray[$key]['end_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['end_time'];
+            $diaryArray[$key]['current_time'] = date('H:i');;
 
             $day = date('w', strtotime($item['date']));
             $diaryArray[$key]['day_number'] = $day;

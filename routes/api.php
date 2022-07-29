@@ -28,7 +28,9 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
         Route::get('/my-subjects', [\App\Http\Controllers\SubjectController::class, 'mySubjects']);
 
-        Route::get('/diary/{week}', [\App\Http\Controllers\DiaryController::class, 'diary']);
+        Route::get('/diary/{week?}', [\App\Http\Controllers\DiaryController::class, 'diary']);
+
+        Route::get('/journal-view/{id_predmet}', [\App\Http\Controllers\JournalController::class, 'journalView'])->where('id', '[0-9]+');
     });
 
 });

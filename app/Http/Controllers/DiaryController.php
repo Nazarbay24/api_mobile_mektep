@@ -24,13 +24,20 @@ class DiaryController extends Controller
     }
 
 
-    public function diary($locale, $week) {
+    public function diary($locale, $week = -1) {
         $this->repository->init((int) auth()->user()->id_mektep);
 
-        $diary = $this->repository->diary($week);
+        $monday = date("Y-m-d", strtotime('monday '.$week.' week'));
+        $saturday = date("Y-m-d", strtotime('saturday '.($week+1).' week'));
+        $diary = $this->repository->diary($monday, $saturday);
 
+        $monday = date("d.m", strtotime($monday));
+        $saturday = date("d.m", strtotime($saturday));
 
-
-        return $diary;
+        return response()->json([
+            "week" => $week,
+            "week_date" => $monday.' - '.$saturday,
+            "diary" => $diary
+        ], 200);
     }
 }

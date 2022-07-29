@@ -42,7 +42,7 @@ class SubjectRepository
                     'mektep_class.edu_language as lang')
             ->leftJoin('edu_predmet_name', $this->model->getTable().'.predmet', '=', 'edu_predmet_name.id')
             ->leftJoin('mektep_class', $this->model->getTable().'.id_class', '=', 'mektep_class.id')
-            ->leftJoin('mektep_diary_'.auth()->user()->id_mektep.'_'.config('app.year'), function($join)
+            ->leftJoin('mektep_diary_'.auth()->user()->id_mektep.'_'.config('mektep_config.year'), function($join)
             {
                 $join->on($this->model->getTable().'.id', '=', $this->diaryModel->getTable().'.id_predmet');
                 $join->on($this->model->getTable().'.id_teacher', '=', $this->diaryModel->getTable().'.id_teacher');
