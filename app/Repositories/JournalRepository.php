@@ -33,17 +33,19 @@ class JournalRepository
 
     public function journalView($id_predmet, $id_teacher, $chetvert) {
         $predmet = $this->predmetModel
-            ->select('sagat',
-                    $this->model->getTable().'.id_class as id_class',
+            ->select($this->predmetModel->getTable().'.sagat as sagat',
+                    $this->predmetModel->getTable().'.id_class as id_class',
                     'mektep_class.class as class',
                     'mektep_class.group as group',
                     'edu_predmet_name.predmet_'.$this->lang.' as predmet_name')
-            ->leftJoin('mektep_class', $this->model->getTable().'.id_class', '=', 'mektep_class.id')
-            ->leftJoin('mektep_predmet', $this->model->getTable().'.id_predmet', '=', 'mektep_predmet.id')
+            ->leftJoin('mektep_class', $this->predmetModel->getTable().'.id_class', '=', 'mektep_class.id')
+            //->leftJoin('mektep_predmet', $this->model->getTable().'.id_predmet', '=', 'mektep_predmet.id')
             ->leftJoin('edu_predmet_name', 'mektep_predmet.predmet', '=', 'edu_predmet_name.id')
-            ->where('id_predmet', '=', $id_predmet)
-            ->where('id_teacher', '=', $id_teacher)
+            ->where($this->predmetModel->getTable().'.id', '=', $id_predmet)
+            ->where($this->predmetModel->getTable().'.id_teacher', '=', $id_teacher)
             ->first();
+
+        $predmet =
 
         return $predmet;
     }

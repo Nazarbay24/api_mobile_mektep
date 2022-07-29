@@ -45,6 +45,7 @@ class DiaryRepository
             ->leftJoin('edu_predmet_name', 'mektep_predmet.predmet', '=', 'edu_predmet_name.id')
             ->where($this->model->getTable().'.id_teacher', auth()->user()->id)
             ->where($this->model->getTable().'.date', '2021-10-07')//заменить на текущую дату date("Y-m-d")
+            ->orderBy('mektep_class.smena', 'asc')
             ->orderBy($this->model->getTable().'.number', 'asc')
             ->get()->all();
 
