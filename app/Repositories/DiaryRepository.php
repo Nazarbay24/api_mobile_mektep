@@ -77,10 +77,10 @@ class DiaryRepository
 
             $diary[$key]['class'] = $item['class'].'«'.$item['group'].'»';
             unset($diary[$key]['group']);
-            unset($diary[$key]['date']);
 
-            $diary[$key]['start_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['start_time'];
-            $diary[$key]['end_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['end_time'];
+            $diary[$key]['start_time'] = $item['date'].' '.$smenaTime[$item['smena']][$item['lesson_num']]['start_time'].':00';
+            $diary[$key]['end_time'] = $item['date'].' '.$smenaTime[$item['smena']][$item['lesson_num']]['end_time'].':00';
+            unset($diary[$key]['date']);
         }
 
         $todayInfo = [];
@@ -88,8 +88,7 @@ class DiaryRepository
         $dayOfWeek = date('w', strtotime($date));
         $dayOfMonth = date('d', strtotime($date));
         $month = date('m', strtotime($date));
-        $todayInfo['date'] = $date;
-        $todayInfo['current_time'] = date('H:i');
+        $todayInfo['current_time'] = date('Y-m-d H:i:s');
         $todayInfo['day_number'] = $dayOfWeek;
         $todayInfo['day'] = __('d_'.$dayOfWeek).', '.ltrim($dayOfMonth, 0).' '.__('m_'.$month);
 
