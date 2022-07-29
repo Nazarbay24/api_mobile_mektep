@@ -49,6 +49,19 @@ class DiaryRepository
             ->orderBy($this->model->getTable().'.number', 'asc')
             ->get()->all();
 
+        $smenaQuery = DB::table('mektep_smena')
+            ->where('id_mektep', '=', auth()->user()->id_mektep)
+            ->get()->all();
+        $smenaQuery = json_decode(json_encode($smenaQuery), true);
+
+        $smenaTime = [];
+        foreach ($smenaQuery as $item) {
+            for ($i = 1; $i <= 10; $i++) {
+                $smenaTime[$item['smena']][$i]['start_time'] = $item['z'.$i.'_start'];
+                $smenaTime[$item['smena']][$i]['end_time'] = $item['z'.$i.'_end'];
+            }
+        }
+
         foreach ($diary as $key => $item) {
             $prev_tema = $this->model
                 ->select('tema')
@@ -61,25 +74,39 @@ class DiaryRepository
 
             $diary[$key]['prev_tema'] = $prev_tema['tema'] != null ? $prev_tema['tema'] : __("Не задано");
             $diary[$key]['tema'] = $item['tema'] != null ? $item['tema'] : __("Не задано");
+
+            $diary[$key]['class'] = $item['class'].'«'.$item['group'].'»';
+            unset($diary[$key]['group']);
+            unset($diary[$key]['date']);
+
+            $diary[$key]['start_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['start_time'];
+            $diary[$key]['end_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['end_time'];
         }
 
-        return $this->setDiaryTimeAndClass($diary);
+        $todayInfo = [];
+        $date = '2021-10-07'; //заменить на текущую дату date("Y-m-d")
+        $day = date('w', strtotime($date));
+        $todayInfo['date'] = $date;
+        $todayInfo['current_time'] = date('H:i');
+        $todayInfo['day_number'] = $day;
+        switch ($day) {
+            case 1: $todayInfo['day'] = __('Понедельник'); break;
+            case 2: $todayInfo['day'] = __('Вторник');     break;
+            case 3: $todayInfo['day'] = __('Среда');       break;
+            case 4: $todayInfo['day'] = __('Четверг');     break;
+            case 5: $todayInfo['day'] = __('Пятница');     break;
+            case 6: $todayInfo['day'] = __('Суббота');     break;
+            case 0: $todayInfo['day'] = __('Воскресенье'); break;
+        }
+
+        return [
+            "info" => $todayInfo,
+            "diary" => $diary
+        ];
     }
 
 
     public function diary($monday, $saturday) {
-        $smenaQuery = DB::table('mektep_smena')
-            ->where('id_mektep', '=', auth()->user()->id_mektep)
-            ->get()->all();
-        $smenaQuery = json_decode(json_encode($smenaQuery), true);
-
-        $smenaTime = [];
-        foreach ($smenaQuery as $item) {
-            for ($i = 1; $i <= 10; $i++) {
-                $smenaTime[$item['smena']][$i] = $item['z'.$i.'_start'].' - '.$item['z'.$i.'_end'];
-            }
-        }
-
         $weekDiary = $this->model
             ->select('date',
                     'number as lesson_num',
@@ -132,19 +159,21 @@ class DiaryRepository
 
             $diaryArray[$key]['start_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['start_time'];
             $diaryArray[$key]['end_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['end_time'];
-            $diaryArray[$key]['current_time'] = date('H:i');;
+            $diaryArray[$key]['current_time'] = date('H:i');
 
-            $day = date('w', strtotime($item['date']));
-            $diaryArray[$key]['day_number'] = $day;
-            switch ($day) {
-                case 1:  $diaryArray[$key]['day'] = __('Понедельник');   break;
-                case 2:  $diaryArray[$key]['day'] = __('Вторник');       break;
-                case 3:  $diaryArray[$key]['day'] = __('Среда');         break;
-                case 4:  $diaryArray[$key]['day'] = __('Четверг');       break;
-                case 5:  $diaryArray[$key]['day'] = __('Пятница');       break;
-                case 6:  $diaryArray[$key]['day'] = __('Суббота');       break;
-                case 0:  $diaryArray[$key]['day'] = __('Воскресенье');   break;
-            }
+
+                $day = date('w', strtotime($item['date']));
+                $diaryArray[$key]['day_number'] = $day;
+                switch ($day) {
+                    case 1: $diaryArray[$key]['day'] = __('Понедельник'); break;
+                    case 2: $diaryArray[$key]['day'] = __('Вторник');     break;
+                    case 3: $diaryArray[$key]['day'] = __('Среда');       break;
+                    case 4: $diaryArray[$key]['day'] = __('Четверг');     break;
+                    case 5: $diaryArray[$key]['day'] = __('Пятница');     break;
+                    case 6: $diaryArray[$key]['day'] = __('Суббота');     break;
+                    case 0: $diaryArray[$key]['day'] = __('Воскресенье'); break;
+                }
+
         }
 
         return $diaryArray;
