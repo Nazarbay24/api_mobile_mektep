@@ -129,11 +129,11 @@ class DiaryRepository
          $weekDiaryFilteredByDay = [];
          foreach ($weekDiary as $key => $item) {
              if ($item['date'] == "2021-10-07" /*date("Y-m-d")*/) { // заменить на текущую дату
-                 $item['current_day'] = true;
+                 $weekDiaryFilteredByDay[$item['day_number']]['current_day'] = true;
              }
              $item['date'] = date("d.m", strtotime($item['date']));
 
-             $weekDiaryFilteredByDay[$item['day_number']] = ['day' => $item['day']];
+             $weekDiaryFilteredByDay[$item['day_number']]['day'] = $item['day'];
              $weekDiaryFilteredByDay[$item['day_number']]['lessons'][] = $item;
 
 

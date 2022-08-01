@@ -111,11 +111,21 @@ class JournalRepository
             $studentsList[$key]['can_mark'] = $studentsChetvertMarks[$student['id']] ? false : true;
         }
 
+        $dayOfWeek = date('w', strtotime($diary['date']));
+        $dayOfMonth = date('d', strtotime($diary['date']));
+        $month = date('m', strtotime($diary['date']));
+        $selectedDay = ltrim($dayOfMonth, 0).' '.__('m_'.$month);
 
+        $dates
+        foreach ($datesMarksFormative['journalDates'] as $item) {
+
+        }
 
         return [
-            'chetvert' => $chetvert,
+            'chetvert' => __('q_'.$chetvert),
+            'selected_day' => $selectedDay,
             'predmet' => $predmet,
+            'dates' => $datesMarksFormative['journalDates'],
             'students_list' => $studentsList,
         ];
     }
@@ -194,7 +204,10 @@ class JournalRepository
         $journalDates = [];
         foreach($journalDatesQuery as $key => $item) {
             if (!in_array($item['date'], $holidays)) {
-                $journalDates[$item['date']] = date("d.m", strtotime($item['date']));
+                $journalDates[] = [
+                    'date' => $item['date'],
+                    'text' => date("d.m", strtotime($item['date']))
+                ];
             }
             $currentDate = $isCurrentChetvert && $item['date'] <= '2021-10-07'/*date("Y-m-d")*/ ? date("d.m", strtotime($item['date'])) : false; // заменить на текущую дату
         }
