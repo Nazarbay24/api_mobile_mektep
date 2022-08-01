@@ -56,7 +56,7 @@ class SubjectRepository
 
         $subject['lang'] = $subject['lang'] == 1 ? __('Казахский') : __('Русский');
         $subject['progress'] = round(($subject['sagat_passed'] / $subject['sagat']) * 100).'%';
-        $subject['left'] = $subject['sagat'] - $subject['sagat_passed'];
+        $subject['sagat_left'] = $subject['sagat'] - $subject['sagat_passed'];
         $subject['class'] = $subject['class'].'«'.$subject['group'].'»';
         unset($subject['group']);
 
