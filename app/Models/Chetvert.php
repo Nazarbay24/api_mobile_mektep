@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Diary extends BaseModel
+class Chetvert extends BaseModel
 {
     use HasFactory;
 

@@ -124,11 +124,20 @@ class DiaryRepository
             ->orderBy($this->model->getTable().'.id')
             ->get()->all();
 
-         $this->setDiaryTimeAndClass($weekDiary);
+        $weekDiary = $this->setDiaryTimeAndClass($weekDiary);
 
          $weekDiaryFilteredByDay = [];
          foreach ($weekDiary as $key => $item) {
-             $weekDiaryFilteredByDay[$item['day_number']] = $item;
+             if ($item['date'] == "2021-10-07" /*date("Y-m-d")*/) { // заменить на текущую дату
+                 $item['current_day'] = true;
+             }
+             $item['date'] = date("d.m", strtotime($item['date']));
+
+             $weekDiaryFilteredByDay[$item['day']] = $item;
+
+             unset($item['current_time']);
+             unset($item['day_number']);
+             unset($item['day']);
          }
 
          return $weekDiaryFilteredByDay;

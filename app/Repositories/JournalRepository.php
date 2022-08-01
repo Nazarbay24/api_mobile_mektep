@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Chetvert;
 use App\Models\ClassSubgroup;
 use App\Models\Diary;
 use App\Models\Journal;
@@ -15,17 +16,21 @@ class JournalRepository
     protected $model;
     protected $diaryModel;
     protected $predmetModel;
-    protected $studentModel;
+    protected $chetvertModel;
     protected $journalModel;
     protected $lang;
 
-    public function __construct(Model $model, Diary $diaryModel, Predmet $predmetModel, Student $studentModel, Journal $journalModel)
+    public function __construct(Model $model,
+                                Diary $diaryModel,
+                                Predmet $predmetModel,
+                                Journal $journalModel,
+                                Chetvert $chetvertModel)
     {
         $this->model = $model;
         $this->diaryModel = $diaryModel;
         $this->predmetModel = $predmetModel;
-        $this->studentModel = $studentModel;
         $this->journalModel = $journalModel;
+        $this->chetvertModel = $chetvertModel;
 
         if (app()->getLocale() == 'ru') $this->lang = 'rus';
         else if (app()->getLocale() == 'kk') $this->lang = 'kaz';
@@ -36,6 +41,7 @@ class JournalRepository
         $this->model->init($id_mektep);
         $this->diaryModel->init($id_mektep);
         $this->journalModel->init($id_mektep);
+        $this->chetvertModel->init($id_mektep);
     }
 
 
@@ -59,12 +65,50 @@ class JournalRepository
     }
 
 
-    public function journalEdit($id_predmet, $id_teacher, $chetvert, $isCurrentChetvert, $canMark) {
+    public function journalEdit($id_predmet, $id_teacher, $chetvert, $date, $isCurrentChetvert, $canMark) {
         $predmet = $this->getPredmet($id_predmet, $id_teacher);
         $studentsList = $this->getStudentsList($predmet['id_mektep'], $predmet['id_class'], $predmet['subgroup'], $predmet['id_subgroup']);
         $datesMarksFormative = $this->getDatesMarksFormative($chetvert, $isCurrentChetvert, $predmet['id_predmet'], $predmet['id_class']);
 
+        $chetvertDates = config('mektep_config.chetvert');
+        $holidays = config('mektep_config.holidays');
+        if (!$date) {
+            $diary = $this->diaryModel
+                ->where('id_class', '=', $predmet['id_class'])
+                ->where('id_predmet', '=', $predmet['id_predmet'])
+                ->where('date', '>=', $chetvertDates[$chetvert]['start'])
+                ->where('date', '<=', $chetvertDates[$chetvert]['end'])
+                ->where('date', '<=', "2021-10-07") // заменить на текущую дату date("Y-m-d")
+                ->orderBy('date', 'desc')
+                ->first();
+        }
+        else {
+            $diary = $this->diaryModel
+                ->where('id_class', '=', $predmet['id_class'])
+                ->where('id_predmet', '=', $predmet['id_predmet'])
+                ->where('date', '=', $date)
+                ->first();
+        }
+
+        $studentsChetvertMarksQuery = $this->chetvertModel
+            ->select('id_student')
+            ->where('id_predmet', '=', $predmet['id_predmet'])
+            ->where('id_class', '=', $predmet['id_class'])
+            ->get()->all();
+
+        $studentsChetvertMarks = [];
+        foreach ($studentsChetvertMarksQuery as $item) {
+            $studentsChetvertMarks[$item['id_student']] = true;
+        }
+
+        foreach ($studentsList as $key => $student) {
+            $studentsList[$key]['mark'] = $datesMarksFormative[]
+        }
+
+
+
         return [
+            'chetvert' => $chetvert,
             'predmet' => $predmet
         ];
     }
@@ -95,8 +139,8 @@ class JournalRepository
 
 
     public function getStudentsList($id_mektep, $id_class, $subgroup, $id_subgroup) {
-        $studentsList = $this->studentModel
-            ->select('id',
+        $studentsList = Student::
+            select('id',
                 'name',
                 'surname',
                 'lastname')
@@ -110,7 +154,6 @@ class JournalRepository
             $studentsListWithFIO[] = [
                 "id" => $item['id'],
                 "fio" => $item['surname'].' '.$item['name'],
-                "fio_full" => $item['surname'].' '.$item['name'].' '.$item['lastname']
             ];
         }
 
@@ -144,7 +187,7 @@ class JournalRepository
         $journalDates = [];
         foreach($journalDatesQuery as $key => $item) {
             if (!in_array($item['date'], $holidays)) {
-                $journalDates[] = date("d.m", strtotime($item['date']));
+                $journalDates[$item['date']] = date("d.m", strtotime($item['date']));
             }
             $currentDate = $isCurrentChetvert && $item['date'] <= '2021-10-07'/*date("Y-m-d")*/ ? date("d.m", strtotime($item['date'])) : false; // заменить на текущую дату
         }

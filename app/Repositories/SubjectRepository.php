@@ -95,7 +95,7 @@ class SubjectRepository
                 ->first();
 
             $mySubjects[$key]['prev_tema'] = $prev_tema->tema;
-            $mySubjects[$key]['progress'] = round(($item['sagat_passed'] / $item['sagat']) * 100).'%';
+            $mySubjects[$key]['progress'] = __('Пройдено').' '.(round(($item['sagat_passed'] / $item['sagat']) * 100).'%');
             $mySubjects[$key]['class'] = $item['class'].'«'.$item['group'].'»';
             unset($mySubjects[$key]['group']);
             unset($mySubjects[$key]['sagat']);
