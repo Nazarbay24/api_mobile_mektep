@@ -111,21 +111,25 @@ class JournalRepository
             $studentsList[$key]['can_mark'] = $studentsChetvertMarks[$student['id']] ? false : true;
         }
 
-        $dayOfWeek = date('w', strtotime($diary['date']));
+
         $dayOfMonth = date('d', strtotime($diary['date']));
         $month = date('m', strtotime($diary['date']));
         $selectedDay = ltrim($dayOfMonth, 0).' '.__('m_'.$month);
 
-        $dates
+        $dates = [];
         foreach ($datesMarksFormative['journalDates'] as $item) {
+            $dayOfMonth = date('d', strtotime($item['date']));
+            $month = date('m', strtotime($item['date']));
 
+            $item['text'] = ltrim($dayOfMonth, 0).' '.__('m_'.$month);
+            $dates[] = $item;
         }
 
         return [
             'chetvert' => __('q_'.$chetvert),
             'selected_day' => $selectedDay,
             'predmet' => $predmet,
-            'dates' => $datesMarksFormative['journalDates'],
+            'dates' => $dates,
             'students_list' => $studentsList,
         ];
     }

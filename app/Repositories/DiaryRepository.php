@@ -131,8 +131,8 @@ class DiaryRepository
              if ($item['date'] == "2021-10-07" /*date("Y-m-d")*/) { // заменить на текущую дату
                  $weekDiaryFilteredByDay[$item['day_number']]['current_day'] = true;
              }
-             $item['date'] = date("d.m", strtotime($item['date']));
 
+             $weekDiaryFilteredByDay[$item['day_number']]['date'] = date("d.m", strtotime($item['date']));
              $weekDiaryFilteredByDay[$item['day_number']]['day'] = $item['day'];
              $weekDiaryFilteredByDay[$item['day_number']]['lessons'][] = $item;
 
