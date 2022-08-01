@@ -133,14 +133,20 @@ class DiaryRepository
              }
              $item['date'] = date("d.m", strtotime($item['date']));
 
-             $weekDiaryFilteredByDay[$item['day']] = $item;
+             $weekDiaryFilteredByDay[$item['day_number']] = ['day' => $item['day']];
+             $weekDiaryFilteredByDay[$item['day_number']]['lessons'][] = $item;
+
 
              unset($item['current_time']);
              unset($item['day_number']);
              unset($item['day']);
          }
+        $weekDiaryFilteredByDay2 = [];
+         foreach ($weekDiaryFilteredByDay as $item) {
+             $weekDiaryFilteredByDay2[] = $item;
+         }
 
-         return $weekDiaryFilteredByDay;
+         return $weekDiaryFilteredByDay2;
     }
 
 

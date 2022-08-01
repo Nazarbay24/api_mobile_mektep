@@ -18,6 +18,7 @@ class SetLocale
     public function handle(Request $request, Closure $next)
     {
         app()->setLocale($request->segment(2));
+        if ($request->segment(2) == 'en') app()->setLocale('ru');
         return $next($request);
     }
 }

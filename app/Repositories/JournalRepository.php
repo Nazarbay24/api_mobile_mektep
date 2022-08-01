@@ -102,14 +102,21 @@ class JournalRepository
         }
 
         foreach ($studentsList as $key => $student) {
-            $studentsList[$key]['mark'] = $datesMarksFormative[]
+            if (array_key_exists($student['id'], $datesMarksFormative['journalMarks'][$diary['date']][$diary['number']])) {
+                $studentsList[$key]['mark'] = $datesMarksFormative['journalMarks'][$diary['date']][$diary['number']][$student['id']];
+            }
+            if ($datesMarksFormative['formativeMarks'][$student['id']]) {
+                $studentsList[$key]['formative_mark'] = $datesMarksFormative['formativeMarks'][$student['id']];
+            }
+            $studentsList[$key]['can_mark'] = $studentsChetvertMarks[$student['id']] ? false : true;
         }
 
 
 
         return [
             'chetvert' => $chetvert,
-            'predmet' => $predmet
+            'predmet' => $predmet,
+            'students_list' => $studentsList,
         ];
     }
 
