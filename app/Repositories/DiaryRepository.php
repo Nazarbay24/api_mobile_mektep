@@ -31,10 +31,11 @@ class DiaryRepository
     public function todayDiary() {
         $diary = $this->model
             ->select(
-                $this->model->getTable().'.date',
+                $this->model->getTable().'.date as date',
                 $this->model->getTable().'.number as lesson_num',
-                $this->model->getTable().'.id_predmet',
-                $this->model->getTable().'.tema',
+                $this->model->getTable().'.id_predmet as id_predmet',
+                $this->model->getTable().'.tema as tema',
+                $this->model->getTable().'.submitted as submitted',
                 'mektep_class.class as class',
                 'mektep_class.group as group',
                 'mektep_class.smena as smena',
@@ -64,7 +65,7 @@ class DiaryRepository
 
         foreach ($diary as $key => $item) {
             $prev_tema = $this->model
-                ->select('tema')
+                ->select('tema', 'submitted as prev_submitted')
                 ->where('id_teacher', '=', auth()->user()->id)
                 ->where('id_predmet', '=', $item['id_predmet'])
                 ->where('date', '<', $item['date'])
@@ -72,6 +73,7 @@ class DiaryRepository
                 ->orderBy('date', 'desc')
                 ->first();
 
+            $diary[$key]['prev_submitted'] = $prev_tema['prev_submitted'];
             $diary[$key]['prev_tema'] = $prev_tema['tema'] != null ? $prev_tema['tema'] : __("Не задано");
             $diary[$key]['tema'] = $item['tema'] != null ? $item['tema'] : __("Не задано");
 

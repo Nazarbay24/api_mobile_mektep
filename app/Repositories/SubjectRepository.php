@@ -52,6 +52,7 @@ class SubjectRepository
             ->where($this->model->getTable().'.id_teacher', '=', auth()->user()->id)
             ->groupBy($this->model->getTable().'.id')
             ->first();
+        if (!$subject) throw new \Exception('Not found',404);
 
         $subject['lang'] = $subject['lang'] == 1 ? __('Казахский') : __('Русский');
         $subject['progress'] = round(($subject['sagat_passed'] / $subject['sagat']) * 100).'%';
