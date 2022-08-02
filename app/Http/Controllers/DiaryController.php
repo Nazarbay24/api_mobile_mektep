@@ -16,8 +16,6 @@ class DiaryController extends Controller
 
 
     public function todayDiary() {
-        return auth()->refresh();
-
         $this->repository->init((int) auth()->user()->id_mektep);
 
         $diary = $this->repository->todayDiary();
