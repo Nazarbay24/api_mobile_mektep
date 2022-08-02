@@ -8,6 +8,7 @@ use App\Models\Diary;
 use App\Models\Journal;
 use App\Models\Journal as Model;
 use App\Models\Predmet;
+use App\Models\PredmetCriterial;
 use App\Models\Student;
 
 
@@ -74,7 +75,7 @@ class JournalRepository
         $holidays = config('mektep_config.holidays');
         if (!$date) {
             $diary = $this->diaryModel
-                ->where('id_class', '=', $predmet['id_class'])
+                ->where('id_teacher', '=', $id_teacher)
                 ->where('id_predmet', '=', $predmet['id_predmet'])
                 ->where('date', '>=', $chetvertDates[$chetvert]['start'])
                 ->where('date', '<=', $chetvertDates[$chetvert]['end'])
@@ -84,11 +85,12 @@ class JournalRepository
         }
         else {
             $diary = $this->diaryModel
-                ->where('id_class', '=', $predmet['id_class'])
+                ->where('id_teacher', '=', $id_teacher)
                 ->where('id_predmet', '=', $predmet['id_predmet'])
                 ->where('date', '=', $date)
                 ->first();
         }
+
 
         $studentsChetvertMarksQuery = $this->chetvertModel
             ->select('id_student')
@@ -108,7 +110,12 @@ class JournalRepository
             if ($datesMarksFormative['formativeMarks'][$student['id']]) {
                 $studentsList[$key]['formative_mark'] = $datesMarksFormative['formativeMarks'][$student['id']];
             }
-            $studentsList[$key]['can_mark'] = $studentsChetvertMarks[$student['id']] ? false : true;
+            if ($diary['opened'] == 0) {
+                $studentsList[$key]['can_mark'] = false;
+            }
+            else {
+                $studentsList[$key]['can_mark'] = $studentsChetvertMarks[$student['id']] ? false : true;
+            }
         }
 
 
@@ -125,13 +132,40 @@ class JournalRepository
             $dates[] = $item;
         }
 
-        return [
+        $predmet['is_criterial'] = $this->getBoolPredmetIsCriterial($predmet['id_predmet']);
+
+        $journal = [
+            'date' => $diary['date'],
+            'lesson_num' => $diary['number'],
             'chetvert' => __('q_'.$chetvert),
             'selected_day' => $selectedDay,
-            'predmet' => $predmet,
+            'tema_selected' => (bool)$diary['opened'],
+            'tema' => $diary['tema'],
+            'sagat' => $predmet['sagat'],
+            'id_class' => $predmet['id_class'],
+            'id_predmet' => $predmet['id_predmet'],
+            'subgroup' => $predmet['subgroup'],
+            'class' => $predmet['class'],
+            'predmet_name' => $predmet['predmet_name'],
+            'is_criterial' => $predmet['is_criterial'],
             'dates' => $dates,
             'students_list' => $studentsList,
         ];
+
+        return $journal;
+    }
+
+
+    public function setMark($id_teacher, $date, $id_predmet, $id_student, $id_class, $lessonNum, $mark) {
+        return $this->model->create([
+            'jurnal_date' => $date,
+            'jurnal_predmet' => $id_predmet,
+            'jurnal_student_id' => $id_student,
+            'jurnal_mark' => $mark,
+            'jurnal_teacher_id' => $id_teacher,
+            'jurnal_lesson' => $lessonNum,
+            'jurnal_class_id' => $id_class,
+        ]);
     }
 
 
@@ -173,7 +207,7 @@ class JournalRepository
         $studentsListWithFIO = [];
         foreach ($studentsList as $key => $item) {
             $studentsListWithFIO[] = [
-                "id" => $item['id'],
+                "id" => (int)$item['id'],
                 "fio" => $item['surname'].' '.$item['name'],
             ];
         }
@@ -249,5 +283,45 @@ class JournalRepository
             'journalMarks' => $journalMarks,
             'formativeMarks' => $formativeMarks,
         ];
+    }
+
+
+    public function getFormative($id_student, $id_predmet, $chetvert) {
+        $chetvertDates = config('mektep_config.chetvert');
+        $allMarksQuery = $this->journalModel
+            ->where('jurnal_student_id', '=', $id_student)
+            ->where('jurnal_predmet', '=', $id_predmet)
+            ->where('jurnal_date', '>=', $chetvertDates[$chetvert]['start'])
+            ->where('jurnal_date', '<=', $chetvertDates[$chetvert]['end'])
+            ->get()->all();
+
+        $allMarks = [];
+        foreach ($allMarksQuery as $item) {
+            if ($item['jurnal_mark'] >= 1 && $item['jurnal_mark'] <= 10) {
+                $allMarks[] = $item['jurnal_mark'];
+            }
+        }
+
+        $formative = round(array_sum($allMarks) / count($allMarks), 1);
+        return $formative;
+    }
+
+
+    public function getBoolPredmetIsCriterial($id_predmet):bool {
+        $predmet = $this->predmetModel
+            ->select($this->predmetModel->getTable().'.predmet as predmet',
+                'mektep_class.class as class',
+                'mektep_class.edu_language as edu_language')
+            ->leftJoin('mektep_class', $this->predmetModel->getTable().'.id_class', '=', 'mektep_class.id')
+            ->where($this->predmetModel->getTable().'.id', '=', $id_predmet)
+            ->first();
+
+        $isCriterial = PredmetCriterial::
+            where('class', '=', $predmet['class'])
+            ->where('predmet', '=', $predmet['predmet'])
+            ->where('edu_language', '=', $predmet['edu_language'])
+            ->first();
+
+        return (bool)$isCriterial;
     }
 }

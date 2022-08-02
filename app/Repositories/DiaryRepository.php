@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Diary as Model;
+use App\Models\Plan;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -12,6 +13,7 @@ class DiaryRepository
     use Notifiable;
 
     protected $model;
+    protected $planModel;
     protected $lang;
 
     public function __construct(Model $model)
@@ -124,7 +126,32 @@ class DiaryRepository
             ->orderBy($this->model->getTable().'.id')
             ->get()->all();
 
-        $weekDiary = $this->setDiaryTimeAndClass($weekDiary);
+        $smenaQuery = DB::table('mektep_smena')
+            ->where('id_mektep', '=', auth()->user()->id_mektep)
+            ->get()->all();
+        $smenaQuery = json_decode(json_encode($smenaQuery), true);
+
+        $smenaTime = [];
+        foreach ($smenaQuery as $item) {
+            for ($i = 1; $i <= 10; $i++) {
+                $smenaTime[$item['smena']][$i]['start_time'] = $item['z'.$i.'_start'];
+                $smenaTime[$item['smena']][$i]['end_time'] = $item['z'.$i.'_end'];
+            }
+        }
+
+        foreach ($weekDiary as $key => $item) {
+            $weekDiary[$key]['class'] = $item['class'].'«'.$item['group'].'»';
+            unset($weekDiary[$key]['group']);
+
+            $weekDiary[$key]['start_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['start_time'];
+            $weekDiary[$key]['end_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['end_time'];
+            $weekDiary[$key]['current_time'] = date('H:i');
+
+            $day = date('w', strtotime($item['date']));
+            $weekDiary[$key]['day_number'] = $day;
+            $weekDiary[$key]['day'] = __('d_'.$day);
+        }
+
 
          $weekDiaryFilteredByDay = [];
          foreach ($weekDiary as $key => $item) {
@@ -140,6 +167,7 @@ class DiaryRepository
              unset($item['current_time']);
              unset($item['day_number']);
              unset($item['day']);
+             unset($item['date']);
          }
         $weekDiaryFilteredByDay2 = [];
          foreach ($weekDiaryFilteredByDay as $item) {
@@ -150,33 +178,20 @@ class DiaryRepository
     }
 
 
-    public function setDiaryTimeAndClass($diaryArray) {
-        $smenaQuery = DB::table('mektep_smena')
-            ->where('id_mektep', '=', auth()->user()->id_mektep)
-            ->get()->all();
-        $smenaQuery = json_decode(json_encode($smenaQuery), true);
+    public function setTema($id_teacher, $id_predmet, $plan, $date) {
+        $diary = $this->model
+            ->where('id_teacher', '=', $id_teacher)
+            ->where('id_predmet', '=', $id_predmet)
+            ->where('date', '=', $date)
+            ->first();
+        if (!$diary) throw new \Exception(__('Тема не найдена'),404);
 
-        $smenaTime = [];
-        foreach ($smenaQuery as $item) {
-            for ($i = 1; $i <= 10; $i++) {
-                $smenaTime[$item['smena']][$i]['start_time'] = $item['z'.$i.'_start'];
-                $smenaTime[$item['smena']][$i]['end_time'] = $item['z'.$i.'_end'];
-            }
-        }
+        $diary->tema = $plan['title'];
+        $diary->homework = $plan['homework'];
+        $diary->literatura = $plan['literature'];
+        $diary->submitted = 1;
+        $diary->opened = 1;
 
-        foreach ($diaryArray as $key => $item) {
-            $diaryArray[$key]['class'] = $item['class'].'«'.$item['group'].'»';
-            unset($diaryArray[$key]['group']);
-
-            $diaryArray[$key]['start_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['start_time'];
-            $diaryArray[$key]['end_time'] = $smenaTime[$item['smena']][$item['lesson_num']]['end_time'];
-            $diaryArray[$key]['current_time'] = date('H:i');
-
-            $day = date('w', strtotime($item['date']));
-            $diaryArray[$key]['day_number'] = $day;
-            $diaryArray[$key]['day'] = __('d_'.$day);
-        }
-
-        return $diaryArray;
+        return $diary->save();
     }
 }

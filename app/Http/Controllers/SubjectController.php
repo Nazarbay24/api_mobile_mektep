@@ -23,7 +23,7 @@ class SubjectController extends Controller
         $this->planRepository->init((int) auth()->user()->id_mektep);
 
         $subject = $this->subjectRepository->getSubject($id);
-        $plan = $this->planRepository->getPlan($id);
+        $plan = $this->planRepository->getPlansByPredmet($id);
 
         $data = [
             'subject' => $subject,

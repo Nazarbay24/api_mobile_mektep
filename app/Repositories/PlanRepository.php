@@ -21,10 +21,14 @@ class PlanRepository
         $this->model->init($id_mektep);
     }
 
+    public function getPlan($id_plan) {
+        return $this->model->findOrFail($id_plan);
+    }
 
-    public function getPlan($predmetId) {
+
+    public function getPlansByPredmet($predmetId) {
         $plan = $this->model
-            ->select('title', 'sagat')
+            ->select('id','title', 'sagat')
             ->where('mektep_predmet_id', '=', $predmetId)
             ->where('teacher_id', '=', auth()->user()->id)
             ->orderBy('id', 'asc')

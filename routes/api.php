@@ -33,6 +33,12 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
         Route::post('/journal-view/{id_predmet}', [\App\Http\Controllers\JournalController::class, 'journalView'])->where('id', '[0-9]+');
 
         Route::post('/journal-edit/{id_predmet}', [\App\Http\Controllers\JournalController::class, 'journalEdit'])->where('id', '[0-9]+');
+
+        Route::post('/set-tema', [\App\Http\Controllers\JournalController::class, 'setTema']);
+
+        Route::post('/set-mark', [\App\Http\Controllers\JournalController::class, 'setMark']);
+
+        Route::get('/tabel-chetvert/{id_predmet}', [\App\Http\Controllers\TabelController::class, 'chetvertTabel']);
     });
 
 });
