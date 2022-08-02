@@ -247,7 +247,7 @@ class JournalRepository
                     'text' => date("d.m", strtotime($item['date']))
                 ];
             }
-            $currentDate = $isCurrentChetvert && $item['date'] <= '2021-10-07'/*date("Y-m-d")*/ ? date("d.m", strtotime($item['date'])) : false; // заменить на текущую дату
+            $currentDate = $isCurrentChetvert && ($item['date'] <= '2021-10-07')/*date("Y-m-d")*/ ? date("d.m", strtotime($item['date'])) : false; // заменить на текущую дату
         }
 
 
@@ -258,20 +258,42 @@ class JournalRepository
             ->where('jurnal_date', '<=', $chetvertDates[$chetvert]['end'])
             ->get()->all();
 
-        $journalMarks = [];
+        $journalMarksArray = [];
         foreach ($journalMarksQuery as $item) {
-            $journalMarks[$item['jurnal_date']][$item['jurnal_lesson']][$item['jurnal_student_id']] = $item['jurnal_mark'];
+            $journalMarksArray[$item['jurnal_date']][$item['jurnal_lesson']][$item['jurnal_student_id']] = $item['jurnal_mark'];
+        }
+
+        $journalMarks = [];
+        foreach ($journalMarksArray as $date => $lessons) {
+            $item = [
+                'date' => $date,
+                'lessons' => []
+            ];
+            foreach ($lessons as $lesson => $students) {
+                $lessonItem = [
+                    'lesson_num' => $lesson,
+                    'grades' => []
+                ];
+                foreach ($students as $student_id => $mark) {
+                    $lessonItem['grades'][] = [
+                        'id_student' => $student_id,
+                        'grade' => $mark
+                    ];
+                }
+                $item['lessons'][] = $lessonItem;
+            }
+            $journalMarks[] = $item;
         }
 
 
         $formativeMarks = [];
         $ff = [];
         foreach ($journalMarks as $date) {
-            foreach ($date as $lesson) {
-                foreach ($lesson as $id_student => $mark) {
-                    if ($mark >= 1 && $mark <= 10) {
-                        $ff[$id_student]['marks'][] = $mark;
-                        $formativeMarks[$id_student] = round(array_sum($ff[$id_student]['marks']) / count($ff[$id_student]['marks']), 1);
+            foreach ($date['lessons'] as $lesson) {
+                foreach ($lesson['grades'] as $grade) {
+                    if ($grade['grade'] >= 1 && $grade['grade'] <= 10) {
+                        $ff[$grade['id_student']]['marks'][] = $grade['grade'];
+                        $formativeMarks[$grade['id_student']] = round(array_sum($ff[$grade['id_student']]['marks']) / count($ff[$grade['id_student']]['marks']), 1);
                     }
                 }
             }
