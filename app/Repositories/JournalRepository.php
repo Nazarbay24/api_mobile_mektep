@@ -104,19 +104,35 @@ class JournalRepository
         }
 
         foreach ($studentsList as $key => $student) {
-            if (array_key_exists($student['id'], $datesMarksFormative['journalMarks'][$diary['date']][$diary['number']])) {
-                $studentsList[$key]['mark'] = $datesMarksFormative['journalMarks'][$diary['date']][$diary['number']][$student['id']];
-            }
-            if ($datesMarksFormative['formativeMarks'][$student['id']]) {
-                $studentsList[$key]['formative_mark'] = $datesMarksFormative['formativeMarks'][$student['id']];
-            }
             if ($diary['opened'] == 0) {
                 $studentsList[$key]['can_mark'] = false;
             }
             else {
                 $studentsList[$key]['can_mark'] = $studentsChetvertMarks[$student['id']] ? false : true;
             }
+
+            foreach ($datesMarksFormative['journalMarks'] as $date) {
+
+                if ($date['date'] == $diary['date']) {
+                    foreach ($date['lessons'] as $lesson) {
+
+                        if ($lesson['lesson_num'] == $diary['number']) {
+                            foreach ($lesson['grades'] as $grade) {
+
+                                if ($grade['id_student'] == $student['id']) {
+                                    $studentsList[$key]['grade'] = $grade['grade'];
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+
+            }
         }
+
+
 
 
         $dayOfMonth = date('d', strtotime($diary['date']));
@@ -247,7 +263,14 @@ class JournalRepository
                     'text' => date("d.m", strtotime($item['date']))
                 ];
             }
-            $currentDate = $isCurrentChetvert && ($item['date'] <= '2021-10-07')/*date("Y-m-d")*/ ? date("d.m", strtotime($item['date'])) : false; // заменить на текущую дату
+            if ($isCurrentChetvert) {
+                if ($item['date'] <= '2021-10-07') {
+                    $currentDate = $item['date'];
+                }
+            }
+            else {
+                $currentDate = null;
+            }
         }
 
 
