@@ -30,7 +30,6 @@ class TabelRepository
 
     public function chetvertTabel($id_predmet, $id_teacher) {
         $predmet = $this->getPredmet($id_predmet, $id_teacher);
-
         $studentsList = $this->getStudentsList($predmet['id_class'], $predmet['subgroup'], $predmet['id_subgroup']);
 
         $chetvertMarks = $this->chetvertModel
@@ -51,7 +50,10 @@ class TabelRepository
     }
 
 
-    public function criterialTabel() {
+    public function criterialTabel($id_predmet, $id_teacher) {
+        $predmet = $this->getPredmet($id_predmet, $id_teacher);
+        $studentsList = $this->getStudentsList($predmet['id_class'], $predmet['subgroup'], $predmet['id_subgroup']);
+
 
     }
 
