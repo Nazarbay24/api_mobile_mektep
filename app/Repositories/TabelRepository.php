@@ -36,18 +36,25 @@ class TabelRepository
         $chetvertMarks = $this->chetvertModel
             ->where('id_class', '=', $predmet['id_class'])
             ->where('id_predmet', '=', $predmet['id_predmet'])
+            ->orderBy('chetvert_nomer')
             ->get()->all();
 
-        $marks = [];
         foreach ($chetvertMarks as $mark) {
-            $marks[$mark['chetvert_nomer']][$mark['id_student']] = $mark['mark'];
+            $key = array_search($mark['id_student'], array_column($studentsList, 'id'));
+
+            $studentsList[$key][$mark['chetvert_nomer']] = $mark['mark'];
         }
 
         return [
             'students_list' => $studentsList,
-            'marks' => $marks
         ];
     }
+
+
+    public function criterialTabel() {
+
+    }
+
 
     public function getPredmet($id_predmet, $id_teacher) {
         $predmet = $this->predmetModel

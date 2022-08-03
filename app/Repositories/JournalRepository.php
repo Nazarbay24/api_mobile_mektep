@@ -130,6 +130,12 @@ class JournalRepository
                 }
 
             }
+
+            foreach ($datesMarksFormative['formativeMarks'] as $grade) {
+                if ($grade['id_student'] == $student['id']) {
+                    $studentsList[$key]['formative_grade'] = $grade['grade'];
+                }
+            }
         }
 
 
