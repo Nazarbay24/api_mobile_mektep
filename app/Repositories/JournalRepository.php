@@ -331,7 +331,7 @@ class JournalRepository
         foreach ($ff as $id => $mark) {
             $formativeMarks[] = [
                 'id_student' => $id,
-                'grade' => $mark['formative']
+                'grade' => round($mark['formative'], 1)
             ];
         }
 
