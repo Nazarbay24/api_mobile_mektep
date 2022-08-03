@@ -322,7 +322,7 @@ class JournalRepository
                 foreach ($lesson['grades'] as $grade) {
                     if ($grade['grade'] >= 1 && $grade['grade'] <= 10) {
                         $ff[$grade['id_student']]['marks'][] = $grade['grade'];
-                        $ff[$grade['id_student']]['formative'] = round(array_sum($ff[$grade['id_student']]['marks']) / count($ff[$grade['id_student']]['marks']), 1);
+                        $ff[$grade['id_student']]['formative'] = round((array_sum($ff[$grade['id_student']]['marks']) / count($ff[$grade['id_student']]['marks'])), 1);
                     }
                 }
             }
@@ -331,7 +331,7 @@ class JournalRepository
         foreach ($ff as $id => $mark) {
             $formativeMarks[] = [
                 'id_student' => $id,
-                'grade' => round($mark['formative'], 1)
+                'grade' => $mark['formative']
             ];
         }
 
