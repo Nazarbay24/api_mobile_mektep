@@ -322,7 +322,7 @@ class JournalRepository
                 foreach ($lesson['grades'] as $grade) {
                     if ($grade['grade'] >= 1 && $grade['grade'] <= 10) {
                         $ff[$grade['id_student']]['marks'][] = $grade['grade'];
-                        $ff[$grade['id_student']]['formative'] = number_format(round(array_sum($ff[$grade['id_student']]['marks']) / count($ff[$grade['id_student']]['marks']), 1), 2);
+                        $ff[$grade['id_student']]['formative'] = number_format(array_sum($ff[$grade['id_student']]['marks']) / count($ff[$grade['id_student']]['marks']), 1);
                     }
                 }
             }
