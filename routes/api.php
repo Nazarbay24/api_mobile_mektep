@@ -39,6 +39,8 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
         Route::post('/set-mark', [\App\Http\Controllers\JournalController::class, 'setMark']);
 
         Route::get('/tabel-chetvert/{id_predmet}', [\App\Http\Controllers\TabelController::class, 'chetvertTabel']);
+
+        Route::get('/tabel-criterial/{id_predmet}/{chetvert?}', [\App\Http\Controllers\TabelController::class, 'criterialTabel']);
     });
 
 });

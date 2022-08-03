@@ -25,8 +25,12 @@ class TabelController extends Controller
     }
 
 
-    public function criterialTabel($locale, $id_predmet) {
+    public function criterialTabel($locale, $id_predmet, $chetvert = 1) {
         $user = auth()->user();
         $this->repository->init((int) $user->id_mektep);
+
+        $tabel = $this->repository->criterialTabel($id_predmet, $user->id, $chetvert);
+
+        return response()->json($tabel, 200);
     }
 }

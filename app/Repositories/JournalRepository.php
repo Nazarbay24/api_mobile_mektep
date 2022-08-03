@@ -63,6 +63,7 @@ class JournalRepository
             'subgroup' => $predmet['subgroup'],
             'class' => $predmet['class'],
             'predmet_name' => $predmet['predmet_name'],
+            'dates' => $datesMarksFormative['journalDates'],
             'marks' => $datesMarksFormative['journalMarks'],
             'formative_marks' => $datesMarksFormative['formativeMarks'],
             'students_list' => $studentsList,
@@ -257,12 +258,12 @@ class JournalRepository
         $chetvertDates = config('mektep_config.chetvert');
         $holidays = config('mektep_config.holidays');
         $journalDatesQuery = $this->diaryModel
-            ->select('date')
             ->where('id_class', '=', $id_class)
             ->where('id_predmet', '=', $id_predmet)
             ->where('date', '>=', $chetvertDates[$chetvert]['start'])
             ->where('date', '<=', $chetvertDates[$chetvert]['end'])
             ->orderBy('date')
+            ->orderBy('number')
             ->get()->all();
 
         $journalDates = [];
@@ -270,11 +271,12 @@ class JournalRepository
             if (!in_array($item['date'], $holidays)) {
                 $journalDates[] = [
                     'date' => $item['date'],
+                    'lesson_num' => $item['number'],
                     'text' => date("d.m", strtotime($item['date']))
                 ];
             }
             if ($isCurrentChetvert) {
-                if ($item['date'] <= '2021-10-07') {
+                if ($item['date'] == '2021-10-07') { // заменить на текущую дату
                     $currentDate = $item['date'];
                 }
             }
