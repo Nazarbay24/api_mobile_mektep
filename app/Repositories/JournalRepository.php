@@ -228,6 +228,7 @@ class JournalRepository
                 'lastname')
             ->where('id_mektep', '=', $id_mektep)
             ->where('id_class', '=', $id_class)
+            ->orderBy('surname')
             ->get()->all();
         if (!$studentsList) throw new \Exception('Not found',404);
 

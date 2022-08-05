@@ -27,6 +27,7 @@ class JournalController extends Controller
         $this->repository->init((int) $user->id_mektep);
         $chetvert = $this->getChetvert($request);
 
+
         $journal = $this->repository->journalView($id_predmet, $user->id, $chetvert['chetvert'], $chetvert['isCurrentChetvert'], $chetvert['canMark']);
 
         return response()->json($journal, 200);
@@ -113,7 +114,6 @@ class JournalController extends Controller
                     $currentChetvert = +$key;
                 }
             }
-
         }
 
         $isCurrentChetvert = false;
@@ -128,7 +128,7 @@ class JournalController extends Controller
         $canMark = $currentChetvert >= $chetvert ? true : false;
 
         return [
-            'chetvert' => $currentChetvert,
+            'chetvert' => $chetvert,
             'isCurrentChetvert' => $isCurrentChetvert,
             'canMark' => $canMark
         ];

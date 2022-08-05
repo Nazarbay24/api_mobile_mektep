@@ -40,7 +40,8 @@ class TabelRepository
     }
 
 
-    public function chetvertTabel($id_predmet, $id_teacher) {
+    public function chetvertTabel($id_predmet, $id_teacher)
+    {
         $predmet = $this->getPredmet($id_predmet, $id_teacher);
         $studentsList = $this->getStudentsList($predmet['id_class'], $predmet['subgroup'], $predmet['id_subgroup']);
 
@@ -59,16 +60,16 @@ class TabelRepository
         return [
             'predmet_name' => $predmet['predmet_name'],
             'class' => $predmet['class'],
-            'students_count' => count($studentsList),
+            'sagat' => $predmet['sagat'],
             'students_list' => $studentsList,
         ];
     }
 
 
-    public function criterialTabel($id_predmet, $id_teacher, $chetvert) {
+    public function criterialTabel($id_predmet, $id_teacher, $chetvert)
+    {
         $predmet = $this->getPredmet($id_predmet, $id_teacher);
         $studentsList = $this->getStudentsList($predmet['id_class'], $predmet['subgroup'], $predmet['id_subgroup']);
-        $formativeMarks = $this->getFormativeMarks($predmet['id_class'], $predmet['id_predmet'], $chetvert);
         $criterialMarks = $this->getCriterialMarks($predmet['id_class'], $predmet['id_predmet'], $id_teacher);
         $predmetCriterial = $this->getPredmetCriterial($predmet['class_num'], $predmet['predmet'], $predmet['edu_language']);
         if (!$predmetCriterial) throw new \Exception('Not found',404);
@@ -85,57 +86,233 @@ class TabelRepository
             $mark5 = range(85,100);
         }
 
+        // максимальные баллы за четверть
         $criterialMax[1] = json_decode($predmet['max_ch_1']);
         $criterialMax[2] = json_decode($predmet['max_ch_2']);
         $criterialMax[3] = json_decode($predmet['max_ch_3']);
         $criterialMax[4] = json_decode($predmet['max_ch_4']);
 
+        // количество СОР за четверть
         $sorCount[1] = $predmetCriterial['num_sor_1'];
         $sorCount[2] = $predmetCriterial['num_sor_2'];
         $sorCount[3] = $predmetCriterial['num_sor_3'];
         $sorCount[4] = $predmetCriterial['num_sor_4'];
 
+        // количество СОЧ за четверть
         $sochCount[1] = $predmetCriterial['num_soch_1'];
         $sochCount[2] = $predmetCriterial['num_soch_2'];
         $sochCount[3] = $predmetCriterial['num_soch_3'];
         $sochCount[4] = $predmetCriterial['num_soch_4'];
 
-        $sochMax = $criterialMax[$chetvert][0];
-        $sorMaxAll = abs(array_sum($criterialMax[$chetvert]) - $sochMax);
 
-        foreach ($studentsList as $student_key => $student) {
-            $sorTotal = 0;
-            $soch = 0;
-            for ($i = 0; $i < $sorCount[$chetvert]; $i++) {
-                if (isset($criterialMarks[$student['id']][$chetvert][$i+1])) {
-                    $sorTotal = $sorTotal + $criterialMarks[$student['id']][$chetvert][$i+1];
+// ЧЕТВЕРТНОЙ начало *******************
+        if ($chetvert < 5)
+        {
+            $isHalfYear = ($chetvert == 2 || $chetvert == 4) && $sochCount[$chetvert-1] == 0 ? true : false; // полугодие ли этот четверть
+            $formativeMarks = $this->getFormativeMarks($predmet['id_class'], $predmet['id_predmet'], $chetvert, $isHalfYear);
+
+            $sochMax = $criterialMax[$chetvert][0];
+
+            if ($isHalfYear) {  // максимально возможный балл всех СОР за четверть, если это полугодие то за 2 четверти
+                if ($sochCount[$chetvert] > 0) {
+                    $sorMaxAll = abs((array_sum($criterialMax[$chetvert]) + array_sum($criterialMax[$chetvert-1])) - $sochMax);
+                }
+                else {
+                    $sorMaxAll = abs((array_sum($criterialMax[$chetvert]) + array_sum($criterialMax[$chetvert-1])));
                 }
             }
-            if (isset($criterialMarks[$student['id']][$chetvert][0])) {
-                $soch = $criterialMarks[$student['id']][$chetvert][0];
-            }
-
-            $formativeProc = round(number_format((($formativeMarks[$student['id']]/10) * 100 * ($sochCount[$chetvert] > 0 ? 0.25 : 0.5)), 1, '.', ''));
-
-            $sorProc = round(number_format((($sorTotal/$sorMaxAll)*100 * ($sochCount[$chetvert] > 0 ? 0.25 : 0.5)), 1, '.', ''));
-
-            $sochProc = round(number_format((($soch/$sochMax)*100 * 0.5), 1, '.', ''));
-
-            $sumProc = round(number_format(($formativeProc + $sorProc + $sochProc), 1, '.', ''));
-
-            if ($sumProc && (($sochCount[$chetvert] > 0 && is_numeric($soch)) || $sochCount[$i] === 0)) {
-                if     (in_array($sumProc, $mark2)) $mark = 2;
-                elseif (in_array($sumProc, $mark3)) $mark = 3;
-                elseif (in_array($sumProc, $mark4)) $mark = 4;
-                elseif (in_array($sumProc, $mark5)) $mark = 5;
+            else {
+                if ($sochCount[$chetvert] > 0) {
+                    $sorMaxAll = abs(array_sum($criterialMax[$chetvert]) - $sochMax);
+                }
+                else {
+                    $sorMaxAll = abs(array_sum($criterialMax[$chetvert]));
+                }
             }
 
 
+            foreach ($studentsList as $student_key => $student) { // тут начинается основная логика вычисления процентов четверти
+                $mark = 0;
+                $sorTotalGrade = 0;
+                $sochGrade = null;
+
+                for ($i = 0; $i < $sorCount[$chetvert]; $i++) { // суммируем все баллы СОР за четверть
+                    if (isset($criterialMarks[$student['id']][$chetvert][$i+1])) {
+                        $sorTotalGrade = $sorTotalGrade + $criterialMarks[$student['id']][$chetvert][$i+1];
+                    }
+                }
+                if ($isHalfYear) { // если это полугодие прибавляем к СОР баллы предедущего четверти
+                    for ($i = 0; $i < $sorCount[$chetvert-1]; $i++) {
+                        if (isset($criterialMarks[$student['id']][$chetvert-1][$i+1])) {
+                            $sorTotalGrade = $sorTotalGrade + $criterialMarks[$student['id']][$chetvert-1][$i+1];
+                        }
+                    }
+                }
+
+                if (isset($criterialMarks[$student['id']][$chetvert][0])) { // если есть получаем бал СОЧ
+                    $sochGrade = $criterialMarks[$student['id']][$chetvert][0];
+                }
 
 
+                if ($isHalfYear || $sochCount[$chetvert] > 0) // Вычисляем проценты если это полугодие или есть СОЧ, иначе просто показываем оценки СОР
+                {
+                    $formativeProc = round(number_format((($formativeMarks[$student['id']]/10) * 100 * ($sochCount[$chetvert] > 0 ? 0.25 : 0.5)), 1, '.', ''));
+                    $sorProc = round(number_format((($sorTotalGrade/$sorMaxAll)*100 * ($sochCount[$chetvert] > 0 ? 0.25 : 0.5)), 1, '.', ''));
+
+                    if ($sochCount[$chetvert] > 0) { // если есть СОЧ за четверть вычисляем суммарный проц с вместе с СОЧ, иначе без СОЧ
+                        if ($sochGrade) { // если есть оценка СОЧ у студента
+                            $sochProc = round(number_format((($sochGrade/$sochMax)*100 * 0.5), 1, '.', ''));
+                            $totalProc = round(number_format(($formativeProc + $sorProc + $sochProc), 1, '.', '')); // суммарный проц с СОЧ
+
+                            $studentsList[$student_key]['soch_grade'] = $sochGrade;
+                            $studentsList[$student_key]['soch_proc'] = $sochProc.' %';
+                        }
+                        else {
+                            $studentsList[$student_key]['soch_grade'] = 0;
+                            $studentsList[$student_key]['soch_proc'] = '0 %';
+                        }
+                    }
+                    else { // суммарный проц без СОЧ
+                        $totalProc = round(number_format(($formativeProc + $sorProc), 1, '.', ''));
+                    }
+
+
+                    // оцениваем если студенту выставлена оценка СОЧ или за полугодие СОЧ не оценивается
+                    if ($totalProc && (($sochCount[$chetvert] > 0 && is_numeric($sochGrade)) || $sochCount[$chetvert] == 0))
+                    {
+                        if     (in_array($totalProc, $mark2)) $mark = 2;
+                        elseif (in_array($totalProc, $mark3)) $mark = 3;
+                        elseif (in_array($totalProc, $mark4)) $mark = 4;
+                        elseif (in_array($totalProc, $mark5)) $mark = 5;
+                    }
+
+
+                    $studentsList[$student_key]['formative_grade'] = $formativeMarks[$student['id']];
+                    $studentsList[$student_key]['formative_proc'] = $formativeProc ? $formativeProc.' %' : '0 %';
+                    $studentsList[$student_key]['sor_proc'] = $sorProc ? $sorProc.' %' : '0 %';
+                    $studentsList[$student_key]['total_proc'] = $totalProc ? $totalProc.' %' : '0 %';
+                    $studentsList[$student_key]['grade'] = strval($mark);
+                } // конец вычисления
+
+                // оценки СОР
+                for ($i = 0; $i < $sorCount[$chetvert]; $i++) {
+                    if (isset($criterialMarks[$student['id']][$chetvert][$i+1])) {
+                        $studentsList[$student_key]['sor_'.($i+1)] = strval($criterialMarks[$student['id']][$chetvert][$i+1]);
+                    }
+                }
+            }
+
+            $sor = []; // максимально возможные баллы за каждый СОР
+            for ($i = 0; $i < $sorCount[$chetvert]; $i++) {
+                $sor[] = [
+                    'sor_num' => $i+1,
+                    'sor_max' => $criterialMax[$chetvert][$i+1],
+                ];
+            }
+
+            $halfYearSystem = $sochCount[1] > 0 ? false : true; // для фронта, чтобы определить надпись "четверть" или "полугодие"
+
+            return [
+                'predmet_name' => $predmet['predmet_name'],
+                'class' => $predmet['class'],
+                'sagat' => $predmet['sagat'],
+                'chetvert' => $chetvert,
+                'half_year' => $halfYearSystem,
+                'sor' => $sor,
+                'soch' => (bool)$sochCount[$chetvert],
+                'soch_max' => $criterialMax[$chetvert][0],
+                'students_list' => $studentsList,
+            ];
         }
+// ЧЕТВЕРТНОЙ конец *****************
 
-        return $criterialMarks;
+
+// ГОДОВОЙ начало ******************
+        else
+        {
+            $formativeMarks = $this->getFormativeMarks($predmet['id_class'], $predmet['id_predmet'], $chetvert, false, true);
+
+            $sochMax = 0;
+            $sorMaxAll = 0;
+            for ($chet = 1; $chet < 5; $chet++)
+            {
+                if ($sochCount[$chet] > 0) {
+                    $sochMax = $sochMax + $criterialMax[$chet][0];
+                }
+                for ($sor = 0; $sor < $sorCount[$chet]; $sor++) {
+                    $sorMaxAll = $sorMaxAll + $criterialMax[$chet][$sor+1];
+                }
+            }
+
+
+            foreach ($studentsList as $student_key => $student) {
+                $mark = 0;
+                $sorTotal = 0;
+                $sochTotal = null;
+
+
+                for ($chet = 1; $chet < 5; $chet++) {
+                    for ($sor = 0; $sor < $sorCount[$chet]; $sor++) {
+                        if (isset($criterialMarks[$student['id']][$chet][$sor+1])) {
+                            $sorTotal = $sorTotal + $criterialMarks[$student['id']][$chet][$sor+1];
+                        }
+                    }
+                }
+
+                if ($sochCount[2] > 0) {
+                    for ($chet = 1; $chet < 5; $chet++) {
+                        if (isset($criterialMarks[$student['id']][$chet][0])) {
+                            $sochTotal = $sochTotal + $criterialMarks[$student['id']][$chet][0];
+                        }
+                    }
+                }
+
+
+                $formativeProc = round(number_format((($formativeMarks[$student['id']] / 10) * 100 * ($sochCount[2] > 0 ? 0.25 : 0.5)), 1, '.', ''), 1);
+
+                $sorProc = round(number_format((($sorTotal / $sorMaxAll) * 100 * ($sochCount[2] > 0 ? 0.25 : 0.5)), 1, '.', ''), 1);
+
+                if ($sochTotal) {
+                    $sochProc = round(number_format((($sochTotal / $sochMax) * 100 * 0.5), 1, '.', ''), 1);
+                    $totalProc = round(number_format(($formativeProc + $sorProc + $sochProc), 1, '.', ''));
+
+                    $studentsList[$student_key]['soch_grade'] = $sochTotal;
+                    $studentsList[$student_key]['soch_proc'] = $sochProc.' %';
+                } else {
+                    $totalProc = round(number_format(($formativeProc + $sorProc), 1, '.', ''));
+                }
+
+
+                if (in_array($totalProc, $mark2)) $mark = 2;
+                elseif (in_array($totalProc, $mark3)) $mark = 3;
+                elseif (in_array($totalProc, $mark4)) $mark = 4;
+                elseif (in_array($totalProc, $mark5)) $mark = 5;
+
+                $studentsList[$student_key]['sor_grade'] = $sorTotal;
+                $studentsList[$student_key]['formative_grade'] = $formativeMarks[$student['id']];
+                $studentsList[$student_key]['formative_proc'] = $formativeProc ? $formativeProc . ' %' : '0 %';
+                $studentsList[$student_key]['sor_proc'] = $sorProc ? $sorProc . ' %' : '0 %';
+                $studentsList[$student_key]['total_proc'] = $totalProc ? $totalProc . ' %' : '0 %';
+                $studentsList[$student_key]['grade'] = strval($mark);
+            }
+
+            $halfYearSystem = $sochCount[1] > 0 ? false : true;
+            return [
+                'predmet_name' => $predmet['predmet_name'],
+                'class' => $predmet['class'],
+                'sagat' => $predmet['sagat'],
+                'chetvert' => $chetvert,
+                'half_year' => $halfYearSystem,
+                'soch' => (bool)$sochCount[2],
+                'soch_max' => $sochMax,
+                'sor_max' => $sorMaxAll,
+                'students_list' => $studentsList,
+            ];
+        }
+// ГОДОВОЙ конец ******************
+
+
+
     }
 
 
@@ -143,7 +320,8 @@ class TabelRepository
 
 
 
-    public function getCriterialMarks($id_class, $id_predmet, $id_teacher) {
+    public function getCriterialMarks($id_class, $id_predmet, $id_teacher)
+    {
         $criterialMarksQuery = $this->criterialMarkModel
             ->where('id_class', '=', $id_class)
             ->where('id_predmet', '=', $id_predmet)
@@ -158,7 +336,8 @@ class TabelRepository
         return $criterialMarks;
     }
 
-    public function getPredmetCriterial($class_num, $predmet, $edu_language) {
+    public function getPredmetCriterial($class_num, $predmet, $edu_language)
+    {
         return PredmetCriterial::
                     where('class', '=', $class_num)
                     ->where('predmet', '=', $predmet)
@@ -166,11 +345,13 @@ class TabelRepository
                     ->first();
     }
 
-    public function getPredmet($id_predmet, $id_teacher) {
+    public function getPredmet($id_predmet, $id_teacher)
+    {
         $predmet = $this->predmetModel
             ->select(
                 $this->predmetModel->getTable().'.id_class as id_class',
                 $this->predmetModel->getTable().'.id as id_predmet',
+                $this->predmetModel->getTable().'.sagat as sagat',
                 $this->predmetModel->getTable().'.predmet as predmet',
                 $this->predmetModel->getTable().'.subgroup as subgroup',
                 $this->predmetModel->getTable().'.id_subgroup as id_subgroup',
@@ -196,13 +377,15 @@ class TabelRepository
         return $predmet;
     }
 
-    public function getStudentsList($id_class, $subgroup, $id_subgroup) {
+    public function getStudentsList($id_class, $subgroup, $id_subgroup)
+    {
         $studentsList = Student::
         select('id',
             'name',
             'surname',
             'lastname')
             ->where('id_class', '=', $id_class)
+            ->orderBy('surname_latin')
             ->get()->all();
         if (!$studentsList) throw new \Exception('Not found',404);
 
@@ -228,14 +411,27 @@ class TabelRepository
         return $studentsListWithFIO;
     }
 
-    public function getFormativeMarks($id_class, $id_predmet, $chetvert) {
-        $chetvertDates = config('mektep_config.chetvert');
-        $allMarksQuery = $this->journalModel
-            ->where('jurnal_class_id', '=', $id_class)
-            ->where('jurnal_predmet', '=', $id_predmet)
-            ->where('jurnal_date', '>=', $chetvertDates[$chetvert]['start'])
-            ->where('jurnal_date', '<=', $chetvertDates[$chetvert]['end'])
-            ->get()->all();
+    public function getFormativeMarks($id_class, $id_predmet, $chetvert, $isHalfYear = false, $isYear = false)
+    {
+        if ($isYear) {
+            $allMarksQuery = $this->journalModel
+                ->where('jurnal_class_id', '=', $id_class)
+                ->where('jurnal_predmet', '=', $id_predmet)
+                ->get()->all();
+        }
+        else {
+            $chetvertDates = config('mektep_config.chetvert');
+            $chetvertStart = $isHalfYear ? $chetvertDates[$chetvert-1]['start'] : $chetvertDates[$chetvert]['start'];
+            $chetvertEnd = $chetvertDates[$chetvert]['end'];
+
+            $allMarksQuery = $this->journalModel
+                ->where('jurnal_class_id', '=', $id_class)
+                ->where('jurnal_predmet', '=', $id_predmet)
+                ->where('jurnal_date', '>=', $chetvertStart)
+                ->where('jurnal_date', '<=', $chetvertEnd)
+                ->get()->all();
+        }
+
 
         $allMarks = [];
         foreach ($allMarksQuery as $item) {
@@ -244,8 +440,7 @@ class TabelRepository
             }
         }
         foreach ($allMarks as $id => $marks) {
-            $allMarks[$id]['formative_mark'] = round(array_sum($marks['marks']) / count($marks['marks']), 1);
-            unset($allMarks[$id]['marks']);
+            $allMarks[$id] = strval(round(array_sum($marks['marks']) / count($marks['marks']), 1));
         }
 
         return $allMarks;
