@@ -268,6 +268,7 @@ class JournalRepository
             ->get()->all();
 
         $journalDates = [];
+        $currentDate = null;
         foreach($journalDatesQuery as $key => $item) {
             if (!in_array($item['date'], $holidays)) {
                 $journalDates[] = [
