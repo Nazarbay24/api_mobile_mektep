@@ -128,7 +128,7 @@ class JournalController extends Controller
         $canMark = $currentChetvert >= $chetvert ? true : false;
 
         return [
-            'chetvert' => $chetvert,
+            'chetvert' => (int)$chetvert,
             'isCurrentChetvert' => $isCurrentChetvert,
             'canMark' => $canMark
         ];
