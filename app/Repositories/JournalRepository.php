@@ -282,9 +282,6 @@ class JournalRepository
                     $currentDate = $item['date'];
                 }
             }
-            else {
-                $currentDate = null;
-            }
         }
 
 

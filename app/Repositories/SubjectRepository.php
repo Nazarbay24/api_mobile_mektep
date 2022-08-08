@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Diary;
 use App\Models\Predmet as Model;
+use App\Models\PredmetCriterial;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 
@@ -34,6 +35,7 @@ class SubjectRepository
         $subject = $this->model
             ->select($this->model->getTable().'.id as id',
                     'sagat',
+                    'predmet',
                     DB::raw('count('.$this->diaryModel->getTable().'.id) as sagat_passed'),
                     'subgroup',
                     'edu_predmet_name.predmet_'.$this->lang.' as predmet_name',
@@ -54,11 +56,19 @@ class SubjectRepository
             ->first();
         if (!$subject) throw new \Exception('Not found',404);
 
+        $isCriterial = PredmetCriterial::
+        where('class', '=', $subject['class'])
+            ->where('predmet', '=', $subject['predmet'])
+            ->where('edu_language', '=', $subject['lang'])
+            ->first();
+
         $subject['lang'] = $subject['lang'] == 1 ? __('Казахский') : __('Русский');
         $subject['progress'] = round(($subject['sagat_passed'] / $subject['sagat']) * 100).'%';
         $subject['sagat_left'] = $subject['sagat'] - $subject['sagat_passed'];
         $subject['class'] = $subject['class'].'«'.$subject['group'].'»';
+        $subject['is_criterial'] = (bool)$isCriterial;
         unset($subject['group']);
+        unset($subject['predmet']);
 
         return $subject;
     }
