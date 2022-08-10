@@ -134,11 +134,28 @@ class StudentsRepository
 
         $predmets = $this->predmetModel
             ->select($this->predmetModel->getTable().'.id as id',
-                'edu_predmet_name.predmet_'.$this->lang)
+                'mektep_teacher.name',
+                'mektep_teacher.surname',
+                'edu_predmet_name.predmet_'.$this->lang.' as predmet_name')
             ->leftJoin('edu_predmet_name', $this->predmetModel->getTable().'.predmet', '=', 'edu_predmet_name.id')
+            ->leftJoin('mektep_teacher', $this->predmetModel->getTable().'.id_teacher', '=', 'mektep_teacher.id')
             ->where($this->predmetModel->getTable().'.id_class', '=', $student['id_class'])
             ->where($this->predmetModel->getTable().'.id_mektep', '=', $student['id_mektep'])
+            ->orderBy($this->predmetModel->getTable().'.predmet')
             ->get()->all();
+
+        foreach ($predmets as $key => $predmet) {
+            $predmets[$key]['teacher'] = $predmet['surname'].' '.$predmet['name'];
+            unset($predmet['name']);
+            unset($predmet['surname']);
+
+            if (array_key_exists($predmet['id'], $chetvertMarks)) {
+                foreach ($chetvertMarks[$predmet['id']] as $chetvert => $mark) {
+                    $predmets[$key][$chetvert] = $mark;
+                }
+            }
+            unset($predmet['id']);
+        }
 
         return $predmets;
     }

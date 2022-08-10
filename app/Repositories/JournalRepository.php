@@ -125,7 +125,7 @@ class JournalRepository
                 $studentsList[$key]['can_mark'] = false;
             }
             else {
-                $studentsList[$key]['can_mark'] = $studentsChetvertMarks[$student['id']] ? false : true;
+                $studentsList[$key]['can_mark'] = array_key_exists($student['id'], $studentsChetvertMarks) ? false : true;
             }
 
             foreach ($datesMarksFormative['journalMarks'] as $date) {
@@ -282,7 +282,7 @@ class JournalRepository
         $journalDates = [];
         $currentDate = null;
         foreach($journalDatesQuery as $key => $item) {
-            if (!in_array($item['date'], $holidays)) {
+            if (!in_array($item['date'], $holidays) && $item['date'] <= '2021-10-07') { // заменить на текущую дату
                 $journalDates[] = [
                     'date' => $item['date'],
                     'lesson_num' => $item['number'],
