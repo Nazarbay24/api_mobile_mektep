@@ -30,9 +30,9 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
         Route::get('/diary/{week?}', [\App\Http\Controllers\DiaryController::class, 'diary']);
 
-        Route::post('/journal-view/{id_predmet}', [\App\Http\Controllers\JournalController::class, 'journalView'])->where('id', '[0-9]+');
+        Route::post('/journal-view/{id_predmet}', [\App\Http\Controllers\JournalController::class, 'journalView'])->where('id_predmet', '[0-9]+');
 
-        Route::post('/journal-edit/{id_predmet}', [\App\Http\Controllers\JournalController::class, 'journalEdit'])->where('id', '[0-9]+');
+        Route::post('/journal-edit/{id_predmet}', [\App\Http\Controllers\JournalController::class, 'journalEdit'])->where('id_predmet', '[0-9]+');
 
         Route::post('/set-tema', [\App\Http\Controllers\JournalController::class, 'setTema']);
 
@@ -41,6 +41,10 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
         Route::get('/tabel-chetvert/{id_predmet}', [\App\Http\Controllers\TabelController::class, 'chetvertTabel']);
 
         Route::get('/tabel-criterial/{id_predmet}/{chetvert?}', [\App\Http\Controllers\TabelController::class, 'criterialTabel']);
+
+        Route::get('/class-list', [\App\Http\Controllers\StudentsController::class, 'classList']);
+
+        Route::get('/students-list/{id_class}', [\App\Http\Controllers\StudentsController::class, 'studentsList'])->where('id_class', '[0-9]+');
     });
 
 });

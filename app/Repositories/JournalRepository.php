@@ -79,14 +79,27 @@ class JournalRepository
         $chetvertDates = config('mektep_config.chetvert');
         $holidays = config('mektep_config.holidays');
         if (!$date) {
-            $diary = $this->diaryModel
-                ->where('id_teacher', '=', $id_teacher)
-                ->where('id_predmet', '=', $predmet['id_predmet'])
-                ->where('date', '>=', $chetvertDates[$chetvert]['start'])
-                ->where('date', '<=', $chetvertDates[$chetvert]['end'])
-                ->where('date', '<=', "2021-10-07") // заменить на текущую дату date("Y-m-d")
-                ->orderBy('date', 'desc')
-                ->first();
+            if($isCurrentChetvert) {
+                $diary = $this->diaryModel
+                    ->where('id_teacher', '=', $id_teacher)
+                    ->where('id_predmet', '=', $predmet['id_predmet'])
+                    ->where('date', '>=', $chetvertDates[$chetvert]['start'])
+                    //->where('date', '<=', $chetvertDates[$chetvert]['end'])
+                    ->where('date', '<=', "2021-10-07")// заменить на текущую дату date("Y-m-d")
+                    ->orderBy('date', 'desc')
+                    ->first();
+            }
+            else {
+                $diary = $this->diaryModel
+                    ->where('id_teacher', '=', $id_teacher)
+                    ->where('id_predmet', '=', $predmet['id_predmet'])
+                    ->where('date', '>=', $chetvertDates[$chetvert]['start'])
+                    ->where('date', '<=', $chetvertDates[$chetvert]['end'])
+                    //->where('date', '<=', "2021-10-07")// заменить на текущую дату date("Y-m-d")
+                    ->orderBy('date', 'desc')
+                    ->first();
+            }
+
         }
         else {
             $diary = $this->diaryModel
@@ -95,7 +108,7 @@ class JournalRepository
                 ->where('date', '=', $date)
                 ->first();
         }
-
+return $diary;
 
         $studentsChetvertMarksQuery = $this->chetvertModel
             ->select('id_student')
