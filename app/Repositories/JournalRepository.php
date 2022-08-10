@@ -108,7 +108,6 @@ class JournalRepository
                 ->where('date', '=', $date)
                 ->first();
         }
-return $diary;
 
         $studentsChetvertMarksQuery = $this->chetvertModel
             ->select('id_student')

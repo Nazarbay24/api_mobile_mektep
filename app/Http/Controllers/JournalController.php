@@ -42,10 +42,10 @@ class JournalController extends Controller
         $date = $request->input('date');
 
         $journal = $this->repository->journalEdit($id_predmet, $user->id, $chetvert['chetvert'], $date, $chetvert['isCurrentChetvert'], $chetvert['canMark']);
-        return response()->json($journal, 200);
-        if ($journal['tema_selected'] == false) {
-            $plan = $this->planRepository->getPlansByPredmet($id_predmet);
-            $journal['plan'] = $plan;
+
+        $journal['plan'] = [];
+        if ($journal['tema_selected'] == true) {
+            $journal['plan'] = $this->planRepository->getPlansByPredmet($id_predmet);
         }
 
         return response()->json($journal, 200);

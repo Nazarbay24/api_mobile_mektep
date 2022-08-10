@@ -28,7 +28,7 @@ class DiaryController extends Controller
         $this->repository->init((int) auth()->user()->id_mektep);
 
         $monday = date("Y-m-d", strtotime('monday '.$week.' week'));
-        $saturday = date("Y-m-d", strtotime('saturday '.($week).' week'));
+        $saturday = date("Y-m-d", strtotime('saturday '.($week+1).' week'));
         $diary = $this->repository->diary($monday, $saturday);
 
         $monday = date("d.m", strtotime($monday));
