@@ -44,7 +44,7 @@ class JournalController extends Controller
         $journal = $this->repository->journalEdit($id_predmet, $user->id, $chetvert['chetvert'], $date, $chetvert['isCurrentChetvert'], $chetvert['canMark']);
 
         $journal['plan'] = [];
-        if ($journal['tema_selected'] == true) {
+        if ($journal['tema_selected'] == false) {
             $journal['plan'] = $this->planRepository->getPlansByPredmet($id_predmet);
         }
 
