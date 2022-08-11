@@ -88,7 +88,7 @@ class JournalController extends Controller
 
             $mark = [
                 'id' => (int)$id_student,
-                'mark' => (int)$setMark['jurnal_mark'],
+                'mark' => $setMark['jurnal_mark'],
             ];
             if ($formativeMark) $mark['formative_mark'] = strval($formativeMark);
 
