@@ -377,7 +377,11 @@ class JournalRepository
             }
         }
 
-        $formative = strval(round(array_sum($allMarks) / count($allMarks), 1));
+        $formative = null;
+        if (count($allMarks) > 0) {
+            $formative = strval(round(array_sum($allMarks) / count($allMarks), 1));
+        }
+
         return $formative;
     }
 

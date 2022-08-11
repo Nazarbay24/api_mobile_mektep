@@ -87,10 +87,10 @@ class JournalController extends Controller
             $formativeMark = $this->repository->getFormative($id_student, $id_predmet, $chetvert['chetvert']);
 
             $mark = [
-                'id_student' => (int)$id_student,
+                'id' => (int)$id_student,
                 'mark' => (int)$setMark['jurnal_mark'],
-                'formative_mark' => strval($formativeMark)
             ];
+            if ($formativeMark) $mark['formative_mark'] = strval($formativeMark);
 
             return response()->json($mark, 200);
         }

@@ -49,6 +49,10 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
         Route::get('/student-tabel/{id_student}', [\App\Http\Controllers\StudentsController::class, 'studentTabel'])->where('id_student', '[0-9]+');
 
         Route::get('/criterial-subjects/{id_class}', [\App\Http\Controllers\StudentsController::class, 'criterialSubjectsByClass'])->where('id_class', '[0-9]+');
+
+        Route::get('/news-list', [\App\Http\Controllers\NewsController::class, 'newsList']);
+
+        Route::get('/new/{id_new}', [\App\Http\Controllers\NewsController::class, 'getNew']);
     });
 
 });
