@@ -40,9 +40,9 @@ class TabelRepository
     }
 
 
-    public function chetvertTabel($id_predmet, $id_teacher)
+    public function chetvertTabel($id_predmet)
     {
-        $predmet = $this->getPredmet($id_predmet, $id_teacher);
+        $predmet = $this->getPredmet($id_predmet);
         $studentsList = $this->getStudentsList($predmet['id_class'], $predmet['subgroup'], $predmet['id_subgroup']);
 
         $chetvertMarks = $this->chetvertModel
@@ -66,11 +66,11 @@ class TabelRepository
     }
 
 
-    public function criterialTabel($id_predmet, $id_teacher, $chetvert)
+    public function criterialTabel($id_predmet, $chetvert)
     {
-        $predmet = $this->getPredmet($id_predmet, $id_teacher);
+        $predmet = $this->getPredmet($id_predmet);
         $studentsList = $this->getStudentsList($predmet['id_class'], $predmet['subgroup'], $predmet['id_subgroup']);
-        $criterialMarks = $this->getCriterialMarks($predmet['id_class'], $predmet['id_predmet'], $id_teacher);
+        $criterialMarks = $this->getCriterialMarks($predmet['id_class'], $predmet['id_predmet']);
         $predmetCriterial = $this->getPredmetCriterial($predmet['class_num'], $predmet['predmet'], $predmet['edu_language']);
         if (!$predmetCriterial) throw new \Exception('Not found',404);
 
@@ -320,12 +320,11 @@ class TabelRepository
 
 
 
-    public function getCriterialMarks($id_class, $id_predmet, $id_teacher)
+    public function getCriterialMarks($id_class, $id_predmet)
     {
         $criterialMarksQuery = $this->criterialMarkModel
             ->where('id_class', '=', $id_class)
             ->where('id_predmet', '=', $id_predmet)
-            ->where('id_teacher', '=', $id_teacher)
             ->get()->all();
 
         $criterialMarks = [];
@@ -345,7 +344,7 @@ class TabelRepository
                     ->first();
     }
 
-    public function getPredmet($id_predmet, $id_teacher)
+    public function getPredmet($id_predmet)
     {
         $predmet = $this->predmetModel
             ->select(
@@ -366,7 +365,6 @@ class TabelRepository
             ->leftJoin('mektep_class', $this->predmetModel->getTable().'.id_class', '=', 'mektep_class.id')
             ->leftJoin('edu_predmet_name', 'mektep_predmet.predmet', '=', 'edu_predmet_name.id')
             ->where($this->predmetModel->getTable().'.id', '=', $id_predmet)
-            ->where($this->predmetModel->getTable().'.id_teacher', '=', $id_teacher)
             ->first();
         if (!$predmet) throw new \Exception('Not found',404);
 

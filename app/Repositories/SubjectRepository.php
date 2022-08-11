@@ -114,4 +114,31 @@ class SubjectRepository
 
         return $mySubjects;
     }
+
+
+    public function criterialSubjectsByClass($id_class) {
+        $subjects = $this->model
+            ->select($this->model->getTable().'.id as id_predmet',
+                    $this->model->getTable().'.sagat as sagat',
+                    'edu_predmet_name.predmet_'.$this->lang.' as predmet_name',
+                    'mektep_teacher.name as name',
+                    'mektep_teacher.surname as surname',
+            )
+            ->leftJoin('edu_predmet_name', $this->model->getTable().'.predmet', '=', 'edu_predmet_name.id')
+            ->leftJoin('mektep_class', $this->model->getTable().'.id_class', '=', 'mektep_class.id')
+            ->leftJoin('mektep_teacher', $this->model->getTable().'.id_teacher', '=', 'mektep_teacher.id')
+            ->join('edu_predmet_criterial', function($join)
+            {
+                $join->on($this->model->getTable().'.predmet', '=', 'edu_predmet_criterial.predmet');
+                $join->on('mektep_class.class', '=', 'edu_predmet_criterial.class');
+                $join->on('mektep_class.edu_language', '=', 'edu_predmet_criterial.edu_language');
+            })
+            ->where($this->model->getTable().'.id_class', '=', $id_class)
+            ->orderBy($this->model->getTable().'.predmet')
+            ->get()->all();
+
+
+
+        return $subjects;
+    }
 }

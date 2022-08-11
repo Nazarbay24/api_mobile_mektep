@@ -89,7 +89,7 @@ class JournalController extends Controller
             $mark = [
                 'id_student' => (int)$id_student,
                 'mark' => (int)$setMark['jurnal_mark'],
-                'formative_mark' => (int)$formativeMark
+                'formative_mark' => strval($formativeMark)
             ];
 
             return response()->json($mark, 200);

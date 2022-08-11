@@ -19,7 +19,7 @@ class TabelController extends Controller
         $user = auth()->user();
         $this->repository->init((int) $user->id_mektep);
 
-        $tabel = $this->repository->chetvertTabel($id_predmet, $user->id);
+        $tabel = $this->repository->chetvertTabel($id_predmet);
 
         return response()->json($tabel, 200);
     }
@@ -29,7 +29,7 @@ class TabelController extends Controller
         $user = auth()->user();
         $this->repository->init((int) $user->id_mektep);
 
-        $tabel = $this->repository->criterialTabel($id_predmet, $user->id, $chetvert);
+        $tabel = $this->repository->criterialTabel($id_predmet, $chetvert);
 
         return response()->json($tabel, 200);
     }
