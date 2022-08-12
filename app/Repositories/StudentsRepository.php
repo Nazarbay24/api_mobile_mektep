@@ -132,7 +132,7 @@ class StudentsRepository
             $chetvertMarks[$item['id_predmet']][$item['chetvert_nomer']] = strval($item['mark']);
         }
 
-        $predmets = $this->predmetModel
+        $predmetsQuery = $this->predmetModel
             ->select($this->predmetModel->getTable().'.id as id',
                 'mektep_teacher.name',
                 'mektep_teacher.surname',
@@ -144,17 +144,19 @@ class StudentsRepository
             ->orderBy($this->predmetModel->getTable().'.predmet')
             ->get()->all();
 
-        foreach ($predmets as $key => $predmet) {
-            $predmets[$key]['teacher'] = $predmet['surname'].' '.$predmet['name'];
-            unset($predmet['name']);
-            unset($predmet['surname']);
+        $predmets = [];
+        foreach ($predmetsQuery as $predmet) {
+            $item = [
+                'predmet_name' => $predmet['predmet_name'],
+                'teacher' => $predmet['surname'].' '.$predmet['name']
+            ];
 
             if (array_key_exists($predmet['id'], $chetvertMarks)) {
                 foreach ($chetvertMarks[$predmet['id']] as $chetvert => $mark) {
-                    $predmets[$key][$chetvert] = $mark;
+                    $item[$chetvert] = $mark;
                 }
             }
-            unset($predmet['id']);
+            $predmets[] = $item;
         }
 
         return $predmets;
