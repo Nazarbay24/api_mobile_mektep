@@ -214,14 +214,14 @@ class TabelRepository
                 ];
             }
 
-            $halfYearSystem = $sochCount[1] > 0 ? false : true; // для фронта, чтобы определить надпись "четверть" или "полугодие"
+            //$halfYearSystem = $sochCount[1] > 0 ? false : true;
 
             return [
                 'predmet_name' => $predmet['predmet_name'],
                 'class' => $predmet['class'],
                 'sagat' => $predmet['sagat'],
                 'chetvert' => $chetvert,
-                'half_year' => $halfYearSystem,
+                'is_half_year' => $isHalfYear,
                 'sor' => $sor,
                 'soch' => (bool)$sochCount[$chetvert],
                 'soch_max' => $criterialMax[$chetvert][0],
@@ -306,7 +306,7 @@ class TabelRepository
                 'class' => $predmet['class'],
                 'sagat' => $predmet['sagat'],
                 'chetvert' => $chetvert,
-                'half_year' => $halfYearSystem,
+                'is_half_year' => $halfYearSystem,
                 'soch' => (bool)$sochCount[2],
                 'soch_max' => strval($sochMax),
                 'sor_max' => strval($sorMaxAll),
