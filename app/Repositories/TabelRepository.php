@@ -280,7 +280,7 @@ class TabelRepository
                     $sochProc = round(number_format((($sochTotal / $sochMax) * 100 * 0.5), 1, '.', ''), 1);
                     $totalProc = round(number_format(($formativeProc + $sorProc + $sochProc), 1, '.', ''));
 
-                    $studentsList[$student_key]['soch_grade'] = $sochTotal;
+                    $studentsList[$student_key]['soch_grade'] = strval($sochTotal);
                     $studentsList[$student_key]['soch_proc'] = $sochProc.' %';
                 } else {
                     $totalProc = round(number_format(($formativeProc + $sorProc), 1, '.', ''));
@@ -292,7 +292,7 @@ class TabelRepository
                 elseif (in_array($totalProc, $mark4)) $mark = 4;
                 elseif (in_array($totalProc, $mark5)) $mark = 5;
 
-                $studentsList[$student_key]['sor_grade'] = $sorTotal;
+                $studentsList[$student_key]['sor_grade'] = strval($sorTotal);
                 $studentsList[$student_key]['formative_grade'] = $formativeMarks[$student['id']];
                 $studentsList[$student_key]['formative_proc'] = $formativeProc ? $formativeProc . ' %' : '0 %';
                 $studentsList[$student_key]['sor_proc'] = $sorProc ? $sorProc . ' %' : '0 %';
@@ -308,8 +308,8 @@ class TabelRepository
                 'chetvert' => $chetvert,
                 'half_year' => $halfYearSystem,
                 'soch' => (bool)$sochCount[2],
-                'soch_max' => $sochMax,
-                'sor_max' => $sorMaxAll,
+                'soch_max' => strval($sochMax),
+                'sor_max' => strval($sorMaxAll),
                 'students_list' => $studentsList,
             ];
         }
