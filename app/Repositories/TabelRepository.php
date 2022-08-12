@@ -195,9 +195,13 @@ class TabelRepository
                 } // конец вычисления
 
                 // оценки СОР
+                $studentsList[$student_key]['sor'] = [];
                 for ($i = 0; $i < $sorCount[$chetvert]; $i++) {
                     if (isset($criterialMarks[$student['id']][$chetvert][$i+1])) {
-                        $studentsList[$student_key]['sor_'.($i+1)] = strval($criterialMarks[$student['id']][$chetvert][$i+1]);
+                        $studentsList[$student_key]['sor'][] = strval($criterialMarks[$student['id']][$chetvert][$i+1]);
+                    }
+                    else {
+                        $studentsList[$student_key]['sor'][] = '';
                     }
                 }
             }
