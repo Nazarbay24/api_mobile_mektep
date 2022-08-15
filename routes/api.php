@@ -14,10 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'middleware' => 'setlocale'], function() {
+
+Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'middleware' => 'setlocale'], function()
+{
     Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 
-    Route::group(['middleware' => ['jwt.verify']], function() {
+    Route::get('/news-list', [\App\Http\Controllers\NewsController::class, 'newsList']);
+
+    Route::get('/new/{id_new}', [\App\Http\Controllers\NewsController::class, 'getNew']);
+
+    Route::group(['middleware' => ['jwt.verify']], function()
+    {
         Route::get('/get-schools', [\App\Http\Controllers\AuthController::class, 'getSchools']);
 
         Route::get('/choice-school/{id}', [\App\Http\Controllers\AuthController::class, 'choiceSchool'])->where('id', '[0-9]+');
@@ -50,9 +57,12 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
         Route::get('/criterial-subjects/{id_class}', [\App\Http\Controllers\StudentsController::class, 'criterialSubjectsByClass'])->where('id_class', '[0-9]+');
 
-        Route::get('/news-list', [\App\Http\Controllers\NewsController::class, 'newsList']);
+        Route::prefix('messanger')->group(function ()
+        {
+            Route::get('/class-list', [\App\Http\Controllers\MessangerController::class, 'classList']);
 
-        Route::get('/new/{id_new}', [\App\Http\Controllers\NewsController::class, 'getNew']);
+            Route::get('/students-list/{id_class}', [\App\Http\Controllers\MessangerController::class, 'studentsList'])->where('id_class', '[0-9]+');
+        });
     });
 
 });

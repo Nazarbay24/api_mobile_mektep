@@ -47,7 +47,6 @@ class StudentsRepository
             ->leftJoin('mektep_teacher', 'mektep_class.kurator', '=', 'mektep_teacher.id')
             ->where($this->predmetModel->getTable().'.id_teacher', '=', $teacher->id)
             ->where($this->predmetModel->getTable().'.id_mektep', '=', $teacher->id_mektep)
-            ->where($this->predmetModel->getTable().'.id_mektep', '=', $teacher->id_mektep)
             ->orderBy('class')
             ->orderBy('group')
             ->get()->all();
@@ -98,8 +97,7 @@ class StudentsRepository
         $students = Student::
             select('id',
                 'name',
-                'surname',
-                'lastname')
+                'surname')
                 ->where('id_class', '=', $id_class)
                 ->orderBy('surname')
                 ->get()->all();
