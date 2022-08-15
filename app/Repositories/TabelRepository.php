@@ -280,7 +280,7 @@ class TabelRepository
                     $sochProc = round(number_format((($sochTotal / $sochMax) * 100 * 0.5), 1, '.', ''), 1);
                     $totalProc = round(number_format(($formativeProc + $sorProc + $sochProc), 1, '.', ''));
 
-                    $studentsList[$student_key]['soch_grade'] = strval($sochTotal);
+                    $studentsList[$student_key]['soch_grade'] = intval($sochTotal);
                     $studentsList[$student_key]['soch_proc'] = $sochProc.' %';
                 } else {
                     $totalProc = round(number_format(($formativeProc + $sorProc), 1, '.', ''));
