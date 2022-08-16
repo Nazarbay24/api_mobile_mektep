@@ -81,7 +81,6 @@ class JournalRepository
         if (!$date) {
             if($isCurrentChetvert) {
                 $diary = $this->diaryModel
-                    ->where('id_teacher', '=', $id_teacher)
                     ->where('id_predmet', '=', $predmet['id_predmet'])
                     ->where('date', '>=', $chetvertDates[$chetvert]['start'])
                     //->where('date', '<=', $chetvertDates[$chetvert]['end'])
@@ -91,7 +90,6 @@ class JournalRepository
             }
             else {
                 $diary = $this->diaryModel
-                    ->where('id_teacher', '=', $id_teacher)
                     ->where('id_predmet', '=', $predmet['id_predmet'])
                     ->where('date', '>=', $chetvertDates[$chetvert]['start'])
                     ->where('date', '<=', $chetvertDates[$chetvert]['end'])
@@ -103,7 +101,6 @@ class JournalRepository
         }
         else {
             $diary = $this->diaryModel
-                ->where('id_teacher', '=', $id_teacher)
                 ->where('id_predmet', '=', $predmet['id_predmet'])
                 ->where('date', '=', $date)
                 ->first();

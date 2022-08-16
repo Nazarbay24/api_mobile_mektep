@@ -81,7 +81,7 @@ class MessangerRepository
             if ($student['parent_ana_id'] > 0) $parentsIds[] = $student['parent_ana_id'];
         }
 
-        $parentsQuery = $this->parentModel
+        $parents = $this->parentModel
             ->select('id',
                     'name',
                     'surname',
@@ -94,17 +94,46 @@ class MessangerRepository
             ->get()->all();
 
 
-        $studentsList = [];
-        foreach ($students as $key => $item) {
-            $studentsList[] = [
-                "id" => (int)$item['id'],
-                "fio" => $item['surname'].' '.$item['name'],
-            ];
+        $parentsList = [];
+        foreach ($students as $student) {
+            $item = [];
+
+            $ataKey = array_search($student['parent_ata_id'], array_column($parents, 'id'));
+            $parentAta = $ataKey ? $parents[$ataKey] : null;
+
+            $anaKey = array_search($student['parent_ana_id'], array_column($parents, 'id'));
+            $parentAna = $anaKey ? $parents[$anaKey] : null;
+
+            $item['student_id'] = $student['id'];
+            $item['student_name'] = $student['surname'].' '.$student['name'];
+
+            $item['ata'] = $parentAta ? [
+                'id' => $parentAta['id'],
+                'name' => $parentAta['surname'].' '.$parentAta['name']
+            ] : null;
+
+            $item['ana'] = $parentAna ? [
+                'id' => $parentAna['id'],
+                'name' => $parentAna['surname'].' '.$parentAna['name']
+            ] : null;
+
+
+            if ($parentAta || $parentAna) {
+                $parentsList[] = [
+                    'student_id' => $student['id'],
+                    'student_name' => $student['surname'].' '.$student['name'],
+                    'father' => $parentAta ? $item['ata'] = [
+                        'id' => $parentAta['id'],
+                        'name' => $parentAta['surname'].' '.$parentAta['name']
+                    ] : null,
+                    'mother' => $parentAna ? [
+                        'id' => $parentAna['id'],
+                        'name' => $parentAna['surname'].' '.$parentAna['name']
+                    ] : null
+                ];
+            }
         }
 
-        return [
-            'class_info' => $classInfo,
-            'students' => $studentsList
-        ];
+        return $parentsList;
     }
 }
