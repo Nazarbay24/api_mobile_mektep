@@ -136,4 +136,25 @@ class MessangerRepository
 
         return $parentsList;
     }
+
+
+    public function getMessages($id_parent, $id_teacher) {
+        $parent = $this->parentModel->findOrFail($id_parent);
+
+        $messages = $this->messageModel
+            ->where([
+                ['poluchatel_id', '=', $id_teacher.'@t'],
+                ['otpravitel_id', '=', $id_parent.'@p'],
+            ])
+            ->orWhere([
+                ['poluchatel_id', '=', $id_parent.'@p'],
+                ['otpravitel_id', '=', $id_teacher.'@t'],
+            ])
+            ->orderBy('date_server')
+            ->get()->all();
+
+
+
+        return $id_teacher;
+    }
 }

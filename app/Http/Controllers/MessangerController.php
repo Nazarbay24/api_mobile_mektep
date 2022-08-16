@@ -25,10 +25,17 @@ class MessangerController extends Controller
 
 
     public function studentsList($locale, $id_class) {
-        $teacher = auth()->user();
-
         $studentsList = $this->repository->studentsList($id_class);
 
         return response()->json($studentsList, 200);
+    }
+
+
+    public function getMessages($locale, $id_parent) {
+        $teacher = auth()->user();
+
+        $messages = $this->repository->getMessages($id_parent, $teacher->id);
+
+        return response()->json($messages, 200);
     }
 }

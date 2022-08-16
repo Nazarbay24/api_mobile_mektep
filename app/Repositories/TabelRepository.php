@@ -400,7 +400,7 @@ class TabelRepository
         }
 
         if ($id_subgroup > 0) {
-            $subgroup = ClassSubgroup::select('group_students_'.$subgroup.' as ids')->where('id', '=', $id_subgroup);
+            $subgroup = ClassSubgroup::select('group_students_'.$subgroup.' as ids')->where('id', '=', $id_subgroup)->first();
             $subgroup_students = json_decode($subgroup['ids']);
 
             foreach ($studentsListWithFIO as $key => $student) {
