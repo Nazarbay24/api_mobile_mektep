@@ -6,6 +6,7 @@ use App\Models\Message;
 use App\Models\ParentModel;
 use App\Models\Predmet;
 use App\Models\Student;
+use App\Models\Teacher;
 
 class MessangerRepository
 {
@@ -141,7 +142,8 @@ class MessangerRepository
     public function getMessages($id_parent, $id_teacher) {
         $parent = $this->parentModel->findOrFail($id_parent);
 
-        $messages = $this->messageModel
+        $messages = [];
+        $messagesQuery = $this->messageModel
             ->where([
                 ['poluchatel_id', '=', $id_teacher.'@t'],
                 ['otpravitel_id', '=', $id_parent.'@p'],
@@ -153,8 +155,29 @@ class MessangerRepository
             ->orderBy('date_server')
             ->get()->all();
 
+        foreach ($messagesQuery as $item) {
+            $messages[] = [
+                'id_message' => $item['id_mes'],
+                'from' => $item['otpravitel_id'] == $id_teacher.'@t' ? 'teacher' : 'parent',
+                'text' => $item['text'],
+                'date' => $item['date_server']
+            ];
+        }
 
 
-        return $id_teacher;
+        if ($parent['last_visit'] == '0000-00-00 00:00:00') {
+            $parent['last_visit'] = __('Никогда');
+        }
+
+        return [
+            'parent_name' => $parent['surname'].' '.$parent['name'],
+            'last_visit' => $parent['last_visit'],
+            'messages' => $messages
+        ];
+    }
+
+
+    public function addMessage() {
+
     }
 }

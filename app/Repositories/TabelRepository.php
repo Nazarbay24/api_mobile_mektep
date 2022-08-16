@@ -391,22 +391,26 @@ class TabelRepository
             ->get()->all();
         if (!$studentsList) throw new \Exception('Not found',404);
 
-        $studentsListWithFIO = [];
-        foreach ($studentsList as $key => $item) {
-            $studentsListWithFIO[] = [
-                "id" => (int)$item['id'],
-                "fio" => $item['surname'].' '.$item['name'],
-            ];
-        }
-
         if ($id_subgroup > 0) {
             $subgroup = ClassSubgroup::select('group_students_'.$subgroup.' as ids')->where('id', '=', $id_subgroup)->first();
             $subgroup_students = json_decode($subgroup['ids']);
+        }
 
-            foreach ($studentsListWithFIO as $key => $student) {
-                if (!in_array($student['id'], $subgroup_students)) {
-                    unset($studentsListWithFIO[$key]);
+        $studentsListWithFIO = [];
+        foreach ($studentsList as $key => $item) {
+            if ($id_subgroup > 0) {
+                if (in_array($item['id'], $subgroup_students)) {
+                    $studentsListWithFIO[] = [
+                        "id" => (int)$item['id'],
+                        "fio" => $item['surname'].' '.$item['name'],
+                    ];
                 }
+            }
+            else {
+                $studentsListWithFIO[] = [
+                    "id" => (int)$item['id'],
+                    "fio" => $item['surname'].' '.$item['name'],
+                ];
             }
         }
 
