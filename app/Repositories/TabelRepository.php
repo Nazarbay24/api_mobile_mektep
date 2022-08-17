@@ -192,9 +192,6 @@ class TabelRepository
                     if (array_key_exists($student['id'],$formativeMarks )) {
                         $studentsList[$student_key]['formative_grade'] = $formativeMarks[$student['id']];
                     }
-                    else {
-                        $studentsList[$student_key]['formative_grade'] = '0';
-                    }
                     $studentsList[$student_key]['formative_proc'] = $formativeProc ? $formativeProc.' %' : '0 %';
                     $studentsList[$student_key]['sor_proc'] = $sorProc ? $sorProc.' %' : '0 %';
                     $studentsList[$student_key]['total_proc'] = $totalProc ? $totalProc.' %' : '0 %';
