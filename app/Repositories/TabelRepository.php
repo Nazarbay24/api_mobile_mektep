@@ -192,6 +192,9 @@ class TabelRepository
                     if (array_key_exists($student['id'],$formativeMarks )) {
                         $studentsList[$student_key]['formative_grade'] = $formativeMarks[$student['id']];
                     }
+                    else {
+                        $studentsList[$student_key]['formative_grade'] = '0';
+                    }
                     $studentsList[$student_key]['formative_proc'] = $formativeProc ? $formativeProc.' %' : '0 %';
                     $studentsList[$student_key]['sor_proc'] = $sorProc ? $sorProc.' %' : '0 %';
                     $studentsList[$student_key]['total_proc'] = $totalProc ? $totalProc.' %' : '0 %';
@@ -275,9 +278,9 @@ class TabelRepository
                     }
                 }
 
-
-                $formativeProc = round(number_format((($formativeMarks[$student['id']] / 10) * 100 * ($sochCount[2] > 0 ? 0.25 : 0.5)), 1, '.', ''), 1);
-
+                if (array_key_exists($student['id'],$formativeMarks )) {
+                    $formativeProc = round(number_format((($formativeMarks[$student['id']] / 10) * 100 * ($sochCount[2] > 0 ? 0.25 : 0.5)), 1, '.', ''), 1);
+                }
                 $sorProc = round(number_format((($sorTotal / $sorMaxAll) * 100 * ($sochCount[2] > 0 ? 0.25 : 0.5)), 1, '.', ''), 1);
 
                 if ($sochTotal) {
@@ -296,8 +299,13 @@ class TabelRepository
                 elseif (in_array($totalProc, $mark4)) $mark = 4;
                 elseif (in_array($totalProc, $mark5)) $mark = 5;
 
+                if (array_key_exists($student['id'],$formativeMarks )) {
+                    $studentsList[$student_key]['formative_grade'] = $formativeMarks[$student['id']];
+                }
+                else {
+                    $studentsList[$student_key]['formative_grade'] = '0';
+                }
                 $studentsList[$student_key]['sor_grade'] = strval($sorTotal);
-                $studentsList[$student_key]['formative_grade'] = $formativeMarks[$student['id']];
                 $studentsList[$student_key]['formative_proc'] = $formativeProc ? $formativeProc . ' %' : '0 %';
                 $studentsList[$student_key]['sor_proc'] = $sorProc ? $sorProc . ' %' : '0 %';
                 $studentsList[$student_key]['total_proc'] = $totalProc ? $totalProc . ' %' : '0 %';
