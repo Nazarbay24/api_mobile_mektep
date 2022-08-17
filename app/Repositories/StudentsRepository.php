@@ -107,7 +107,7 @@ class StudentsRepository
             $studentsList[] = [
                 "id" => (int)$item['id'],
                 "fio" => $item['surname'].' '.$item['name'],
-                "avg_grade" => $ulgerim[$item['id']] ? $ulgerim[$item['id']] : '0',
+                "avg_grade" => array_key_exists($item['id'], $ulgerim) ? $ulgerim[$item['id']] : '0',
             ];
         }
 
