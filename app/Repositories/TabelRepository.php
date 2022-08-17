@@ -156,7 +156,10 @@ class TabelRepository
 
                 if ($isHalfYear || $sochCount[$chetvert] > 0) // Вычисляем проценты если это полугодие или есть СОЧ, иначе просто показываем оценки СОР
                 {
-                    $formativeProc = round(number_format((($formativeMarks[$student['id']]/10) * 100 * ($sochCount[$chetvert] > 0 ? 0.25 : 0.5)), 1, '.', ''));
+                    $formativeProc = null;
+                    if (array_key_exists($student['id'],$formativeMarks )) {
+                        $formativeProc = round(number_format((($formativeMarks[$student['id']]/10) * 100 * ($sochCount[$chetvert] > 0 ? 0.25 : 0.5)), 1, '.', ''));
+                    }
                     $sorProc = round(number_format((($sorTotalGrade/$sorMaxAll)*100 * ($sochCount[$chetvert] > 0 ? 0.25 : 0.5)), 1, '.', ''));
 
                     if ($sochCount[$chetvert] > 0) { // если есть СОЧ за четверть вычисляем суммарный проц с вместе с СОЧ, иначе без СОЧ

@@ -23,7 +23,7 @@ class MessangerRepository
 
 
     public function classList($teacher) {
-        $classList = $this->predmetModel
+        $classQuery = $this->predmetModel
             ->select('mektep_class.id as class_id',
                 'mektep_class.class as class',
                 'mektep_class.group as group',
@@ -39,16 +39,44 @@ class MessangerRepository
             ->orderBy('group')
             ->get()->all();
 
-        foreach ($classList as $key => $item) {
-            $classList[$key]['class'] = $item['class'].'«'.$item['group'].'»';
-            unset($classList[$key]['group']);
+        $messages = $this->messageModel
+            ->select('mektep_students.id_class as id_class')
+            ->join('mektep_students', $this->messageModel->getTable().'.child_id', '=', 'mektep_students.id')
+            ->where($this->messageModel->getTable().'.poluchatel_id', '=', $teacher->id.'@t')
+            ->where($this->messageModel->getTable().'.id_mektep', '=', $teacher->id_mektep)
+            ->where($this->messageModel->getTable().'.read_status', '=', 0)
+            ->orderBy($this->messageModel->getTable().'.date_server')
+            ->get()->all();
+
+        $classMessageCount = [];
+        foreach ($messages as $item) {
+            if (array_key_exists($item['id_class'], $classMessageCount)) {
+                $classMessageCount[$item['id_class']]++;
+            }
+            else {
+                $classMessageCount[$item['id_class']] = 1;
+            }
+        }
+
+        $classList = [];
+        foreach ($classQuery as $item) {
+            $item['class'] = $item['class'].'«'.$item['group'].'»';
+            unset($item['group']);
+
+            if (array_key_exists($item['class_id'], $classMessageCount)) {
+                $item['message_count'] = $classMessageCount[$item['class_id']];
+                array_unshift($classList, $item);
+            }
+            else {
+                $classList[] = $item;
+            }
         }
 
         return $classList;
     }
 
 
-    public function studentsList($id_class) {
+    public function studentsList($id_class, $teacher) {
         $classInfo = $this->predmetModel
             ->select('mektep_class.id as class_id',
                 'mektep_class.class as class',
@@ -95,6 +123,29 @@ class MessangerRepository
             ->get()->all();
 
 
+        $messages = $this->messageModel
+            ->select($this->messageModel->getTable().'.otpravitel_id')
+            ->join('mektep_students', $this->messageModel->getTable().'.child_id', '=', 'mektep_students.id')
+            ->where($this->messageModel->getTable().'.poluchatel_id', '=', $teacher->id.'@t')
+            ->where($this->messageModel->getTable().'.id_mektep', '=', $teacher->id_mektep)
+            ->where('mektep_students.id_class', '=', $id_class)
+            ->where($this->messageModel->getTable().'.read_status', '=', 0)
+            ->orderBy($this->messageModel->getTable().'.date_server')
+            ->get()->all();
+
+        $parentMessageCount = [];
+        foreach ($messages as $item) {
+            $id_parent = explode('@', $item['otpravitel_id'])[0];
+
+            if (array_key_exists($id_parent, $parentMessageCount)) {
+                $parentMessageCount[$id_parent]++;
+            }
+            else {
+                $parentMessageCount[$id_parent] = 1;
+            }
+        }
+return $parentMessageCount;
+
         $parentsList = [];
         foreach ($students as $student) {
             $item = [];
@@ -139,7 +190,7 @@ class MessangerRepository
     }
 
 
-    public function getMessages($id_parent, $id_teacher) {
+    public function getMessages($id_parent, $id_student, $id_teacher) {
         $parent = $this->parentModel->findOrFail($id_parent);
 
         $messages = [];
@@ -154,6 +205,20 @@ class MessangerRepository
             ])
             ->orderBy('date_server')
             ->get()->all();
+
+        if ($messagesQuery) {
+            $this->messageModel
+                ->where([
+                    ['poluchatel_id', '=', $id_teacher.'@t'],
+                    ['otpravitel_id', '=', $id_parent.'@p'],
+                ])
+                ->orWhere([
+                    ['poluchatel_id', '=', $id_parent.'@p'],
+                    ['otpravitel_id', '=', $id_teacher.'@t'],
+                ])
+                ->orderBy('date_server')
+                ->update(['read_status' => 1]);
+        }
 
         foreach ($messagesQuery as $item) {
             $messages[] = [
@@ -170,6 +235,8 @@ class MessangerRepository
         }
 
         return [
+            'id_parent' => $parent['id'],
+            'id_student' => intval($id_student),
             'parent_name' => $parent['surname'].' '.$parent['name'],
             'last_visit' => $parent['last_visit'],
             'messages' => $messages
@@ -177,7 +244,27 @@ class MessangerRepository
     }
 
 
-    public function addMessage() {
+    public function addMessage($id_parent, $id_student, $text, $id_teacher, $id_mektep) {
+        return $this->messageModel
+            ->create([
+                'otpravitel_id' => $id_teacher.'@t',
+                'poluchatel_id' => $id_parent.'@p',
+                'tema' => $text,
+                'text' => $text,
+                'data_otpravki' => date('Y-m-d'),
+                'date_server' => date("Y-m-d H:i:s"),
+                'otpravitel_action' => 1,
+                'poluchatel_action' => 1,
+                'child_id' => $id_student,
+                'id_mektep' => $id_mektep
+            ]);
+    }
 
+
+    public function deleteMessage($id_message, $id_teacher) {
+        return $this->messageModel
+            ->where('id_mes', '=', $id_message)
+            ->where('otpravitel_id', '=', $id_teacher.'@t')
+            ->delete();
     }
 }

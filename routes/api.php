@@ -64,7 +64,11 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
             Route::get('/students-list/{id_class}', [\App\Http\Controllers\MessangerController::class, 'studentsList'])->where('id_class', '[0-9]+');
 
-            Route::get('/get-messages/{id_parent}', [\App\Http\Controllers\MessangerController::class, 'getMessages'])->where('id_parent', '[0-9]+');
+            Route::post('/get-messages', [\App\Http\Controllers\MessangerController::class, 'getMessages']);
+
+            Route::post('/add-message', [\App\Http\Controllers\MessangerController::class, 'addMessage']);
+
+            Route::post('/delete-message', [\App\Http\Controllers\MessangerController::class, 'deleteMessage']);
         });
     });
 
