@@ -243,6 +243,9 @@ class MessangerRepository
         if ($parent['last_visit'] == '0000-00-00 00:00:00') {
             $parent['last_visit'] = __('Никогда');
         }
+        else {
+            $parent['last_visit'] = date("d.m.y H:m", strtotime($parent['last_visit']));
+        }
 
         return [
             'id_parent' => $parent['id'],
