@@ -37,6 +37,7 @@ class MessangerRepository
             ->where($this->predmetModel->getTable().'.id_mektep', '=', $teacher->id_mektep)
             ->orderBy('class')
             ->orderBy('group')
+            ->groupBy('class_id')
             ->get()->all();
 
         $messages = $this->messageModel
