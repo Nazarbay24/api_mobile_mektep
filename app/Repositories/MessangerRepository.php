@@ -63,6 +63,7 @@ class MessangerRepository
             $item['class'] = $item['class'].'«'.$item['group'].'»';
             unset($item['group']);
 
+            $item['message_count'] = 0;
             if (array_key_exists($item['class_id'], $classMessageCount)) {
                 $item['message_count'] = $classMessageCount[$item['class_id']];
                 array_unshift($classList, $item);
@@ -144,7 +145,7 @@ class MessangerRepository
                 $parentMessageCount[$id_parent] = 1;
             }
         }
-return $parentMessageCount;
+
 
         $parentsList = [];
         foreach ($students as $student) {
@@ -171,18 +172,27 @@ return $parentMessageCount;
 
 
             if ($parentAta || $parentAna) {
-                $parentsList[] = [
+                $elem = [
                     'student_id' => $student['id'],
                     'student_name' => $student['surname'].' '.$student['name'],
                     'father' => $parentAta ? $item['ata'] = [
                         'id' => $parentAta['id'],
-                        'name' => $parentAta['surname'].' '.$parentAta['name']
+                        'name' => $parentAta['surname'].' '.$parentAta['name'],
+                        'message_count' => array_key_exists($parentAta['id'], $parentMessageCount) ? $parentMessageCount[$parentAta['id']] : 0
                     ] : null,
                     'mother' => $parentAna ? [
                         'id' => $parentAna['id'],
-                        'name' => $parentAna['surname'].' '.$parentAna['name']
+                        'name' => $parentAna['surname'].' '.$parentAna['name'],
+                        'message_count' => array_key_exists($parentAna['id'], $parentMessageCount) ? $parentMessageCount[$parentAna['id']] : 0
                     ] : null
                 ];
+
+                if (($parentAta && array_key_exists($parentAta['id'], $parentMessageCount)) || ($parentAna && array_key_exists($parentAna['id'], $parentMessageCount))) {
+                    array_unshift($parentsList, $elem);
+                }
+                else {
+                    $parentsList[] = $elem;
+                }
             }
         }
 

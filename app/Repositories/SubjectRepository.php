@@ -51,7 +51,6 @@ class SubjectRepository
                 $join->where('submitted', '=', '1');
             })
             ->where($this->model->getTable().'.id', '=', $id)
-            ->where($this->model->getTable().'.id_teacher', '=', auth()->user()->id)
             ->groupBy($this->model->getTable().'.id')
             ->first();
         if (!$subject) throw new \Exception('Not found',404);

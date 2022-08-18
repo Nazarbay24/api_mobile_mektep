@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Diary as Model;
+use App\Models\Message;
 use App\Models\Plan;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +31,7 @@ class DiaryRepository
     }
 
 
-    public function todayDiary() {
+    public function todayDiary($teacher) {
         $diary = $this->model
             ->select(
                 $this->model->getTable().'.date as date',
@@ -87,15 +88,25 @@ class DiaryRepository
             unset($diary[$key]['date']);
         }
 
-        $todayInfo = [];
+
+        $messages = Message::
+            where('poluchatel_id', '=', $teacher->id.'@t')
+            ->where('id_mektep', '=', $teacher->id_mektep)
+            ->where('read_status', '=', 0)
+            ->get()->all();
+
+
         $date = '2021-10-07'; //заменить на текущую дату date("Y-m-d")
         $dayOfWeek = date('w', strtotime($date));
         $dayOfMonth = date('d', strtotime($date));
         $month = date('m', strtotime($date));
-        $todayInfo['current_time'] = '2021-10-07 12:53:16'; //заменить на текущую дату date('Y-m-d H:i:s');
-        $todayInfo['day_number'] = $dayOfWeek;
-        $todayInfo['day'] = __('d_'.$dayOfWeek).', '.ltrim($dayOfMonth, 0).' '.__('m_'.$month);
 
+        $todayInfo = [
+            'current_time' => '2021-10-07 12:53:16', //заменить на текущую дату date('Y-m-d H:i:s')
+            'day_number' => $dayOfWeek,
+            'day' => __('d_'.$dayOfWeek).', '.ltrim($dayOfMonth, 0).' '.__('m_'.$month),
+            'message_count' => count($messages)
+        ];
 
         return [
             "info" => $todayInfo,
