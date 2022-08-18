@@ -235,7 +235,7 @@ class MessangerRepository
                 'id_message' => $item['id_mes'],
                 'from' => $item['otpravitel_id'] == $id_teacher.'@t' ? 'teacher' : 'parent',
                 'text' => $item['text'],
-                'date' => $item['date_server']
+                'date' => date("d.m.y H:m", strtotime($item['date_server']))
             ];
         }
 
