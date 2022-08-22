@@ -266,7 +266,7 @@ class MessangerRepository
                 'tema' => $text,
                 'text' => $text,
                 'data_otpravki' => date('Y-m-d'),
-                'date_server' => date("Y-m-d H:i:s"),
+                //'date_server' => date("Y-m-d H:i:s"),
                 'otpravitel_action' => 1,
                 'poluchatel_action' => 1,
                 'child_id' => $id_student,
