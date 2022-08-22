@@ -23,6 +23,8 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
     Route::get('/new/{id_new}', [\App\Http\Controllers\NewsController::class, 'getNew']);
 
+    Route::get('/statistics', [\App\Http\Controllers\StatisticsController::class, 'getStatistics']);
+
 
     Route::group(['middleware' => ['jwt.verify']], function()
     {
