@@ -34,7 +34,7 @@
                 -premailer-cellspacing: 0;">
                 <tr>
                     <td class="email-masthead" style="
-                        padding: 15px 0;
+                        padding: 20px 0;
                         text-align: center;">
                         <h3 class="email-masthead_name" style="font-size: 32px;
         font-weight: bolder;
