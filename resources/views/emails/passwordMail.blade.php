@@ -7,10 +7,12 @@
 <body style="width: 100% !important;
         height: 100%;
         margin: 0;
-        line-height: 1.4;
         background-color: #F2F4F6;
         color: #74787E;
-        -webkit-text-size-adjust: none;">
+        -webkit-text-size-adjust: none;
+        font-size: 16px;
+        line-height: 1.5em;
+        text-align: left;">
 
 
 <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" style="
@@ -32,9 +34,9 @@
                 -premailer-cellspacing: 0;">
                 <tr>
                     <td class="email-masthead" style="
-                        padding: 25px 0;
+                        padding: 15px 0;
                         text-align: center;">
-                        <h3 class="email-masthead_name" style="font-size: 28px;
+                        <h3 class="email-masthead_name" style="font-size: 32px;
         font-weight: bolder;
         color: #0094ce;
         text-decoration: none;
