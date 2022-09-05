@@ -106,4 +106,12 @@ class RecoveryRepository
         }
         return ($k == substr($iin,11,1));
     }
+
+    public function getUser($surname, $iin, $email) {
+        return $this->teacherModel
+            ->where('surname', '=', $surname)
+            ->where('iin', '=', $iin)
+            ->where('email', '=', $email)
+            ->first();
+    }
 }
