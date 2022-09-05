@@ -37,7 +37,7 @@ return [
         'smtp' => [
             'transport' => 'smtp',
             'host' => env('MAIL_HOST', 'mektep.edu.kz'),
-            'port' => env('MAIL_PORT', 25),
+            'port' => env('MAIL_PORT', 587),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('robot@mektep.edu.kz'),
             'password' => env('U{i1+3o9,NV9'),
