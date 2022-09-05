@@ -36,11 +36,11 @@ return [
     'mailers' => [
         'smtp' => [
             'transport' => 'smtp',
-            'host' => env('MAIL_HOST', 'mektep.edu.kz'),
-            'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('robot@mektep.edu.kz'),
-            'password' => env('U{i1+3o9,NV9'),
+            'host' => 'mektep.edu.kz',
+            'port' => 25,
+            'encryption' => 'tls',
+            'username' => 'robot@mektep.edu.kz',
+            'password' => 'U{i1+3o9,NV9',
             'timeout' => null,
             'auth_mode' => null,
         ],
