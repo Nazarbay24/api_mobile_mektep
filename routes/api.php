@@ -25,6 +25,12 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
     Route::get('/statistics', [\App\Http\Controllers\StatisticsController::class, 'getStatistics']);
 
+    Route::prefix('recovery')->group(function ()
+    {
+        Route::post('/find', [\App\Http\Controllers\RecoveryController::class, 'findUser']);
+        Route::post('/send-mail', [\App\Http\Controllers\RecoveryController::class, 'sendPasswordMail']);
+    });
+
 
     Route::group(['middleware' => ['jwt.verify']], function()
     {
