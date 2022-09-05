@@ -110,7 +110,7 @@ class JournalController extends Controller
                 }
             }
             else {
-                if($item['start'] <= '2021-10-07') { // заменить на текущую дату  date("Y-m-d", time())
+                if($item['start'] <= date("Y-m-d")) { // заменить на текущую дату  date("Y-m-d", time())
                     $currentChetvert = +$key;
                 }
             }

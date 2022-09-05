@@ -48,7 +48,7 @@ class DiaryRepository
             ->leftJoin('mektep_predmet', $this->model->getTable().'.id_predmet', '=', 'mektep_predmet.id')
             ->leftJoin('edu_predmet_name', 'mektep_predmet.predmet', '=', 'edu_predmet_name.id')
             ->where($this->model->getTable().'.id_teacher', auth()->user()->id)
-            ->where($this->model->getTable().'.date', '2021-10-07')//заменить на текущую дату date("Y-m-d")
+            ->where($this->model->getTable().'.date', date("Y-m-d"))//заменить на текущую дату date("Y-m-d")
             ->orderBy('mektep_class.smena', 'asc')
             ->orderBy($this->model->getTable().'.number', 'asc')
             ->get()->all();
@@ -96,13 +96,13 @@ class DiaryRepository
             ->get()->all();
 
 
-        $date = '2021-10-07'; //заменить на текущую дату date("Y-m-d")
+        $date = date("Y-m-d"); //заменить на текущую дату date("Y-m-d")
         $dayOfWeek = date('w', strtotime($date));
         $dayOfMonth = date('d', strtotime($date));
         $month = date('m', strtotime($date));
 
         $todayInfo = [
-            'current_time' => '2021-10-07 12:53:16', //заменить на текущую дату date('Y-m-d H:i:s')
+            'current_time' => date('Y-m-d H:i:s'), //заменить на текущую дату date('Y-m-d H:i:s')
             'day_number' => $dayOfWeek,
             'day' => __('d_'.$dayOfWeek).', '.ltrim($dayOfMonth, 0).' '.__('m_'.$month),
             'message_count' => count($messages)
@@ -166,7 +166,7 @@ class DiaryRepository
 
          $weekDiaryFilteredByDay = [];
          foreach ($weekDiary as $key => $item) {
-             if ($item['date'] == "2021-10-07" /*date("Y-m-d")*/) { // заменить на текущую дату
+             if ($item['date'] == date("Y-m-d") /*date("Y-m-d")*/) { // заменить на текущую дату
                  $weekDiaryFilteredByDay[$item['day_number']]['current_day'] = true;
              }
 

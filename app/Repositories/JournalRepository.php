@@ -84,7 +84,7 @@ class JournalRepository
                     ->where('id_predmet', '=', $predmet['id_predmet'])
                     ->where('date', '>=', $chetvertDates[$chetvert]['start'])
                     //->where('date', '<=', $chetvertDates[$chetvert]['end'])
-                    ->where('date', '<=', "2021-10-07")// заменить на текущую дату date("Y-m-d")
+                    ->where('date', '<=', date("Y-m-d"))// заменить на текущую дату date("Y-m-d")
                     ->orderBy('date', 'desc')
                     ->first();
             }
@@ -93,7 +93,7 @@ class JournalRepository
                     ->where('id_predmet', '=', $predmet['id_predmet'])
                     ->where('date', '>=', $chetvertDates[$chetvert]['start'])
                     ->where('date', '<=', $chetvertDates[$chetvert]['end'])
-                    //->where('date', '<=', "2021-10-07")// заменить на текущую дату date("Y-m-d")
+                    //->where('date', '<=', date("Y-m-d"))// заменить на текущую дату date("Y-m-d")
                     ->orderBy('date', 'desc')
                     ->first();
             }
@@ -279,7 +279,7 @@ class JournalRepository
         $journalDates = [];
         $currentDate = null;
         foreach($journalDatesQuery as $key => $item) {
-            if (!in_array($item['date'], $holidays) && $item['date'] <= '2021-10-07') { // заменить на текущую дату
+            if (!in_array($item['date'], $holidays) && $item['date'] <= date("Y-m-d")) { // заменить на текущую дату
                 $journalDates[] = [
                     'date' => $item['date'],
                     'lesson_num' => $item['number'],
@@ -287,7 +287,7 @@ class JournalRepository
                 ];
             }
             if ($isCurrentChetvert) {
-                if ($item['date'] == '2021-10-07') { // заменить на текущую дату
+                if ($item['date'] == date("Y-m-d")) { // заменить на текущую дату
                     $currentDate = $item['date'];
                 }
             }
