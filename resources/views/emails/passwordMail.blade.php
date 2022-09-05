@@ -34,8 +34,8 @@
                     <td class="email-masthead" style="
                         padding: 25px 0;
                         text-align: center;">
-                        <h3 class="email-masthead_name" style="font-size: 20px;
-        font-weight: bold;
+                        <h3 class="email-masthead_name" style="font-size: 28px;
+        font-weight: bolder;
         color: #0094ce;
         text-decoration: none;
         text-align: center;
@@ -67,7 +67,7 @@
                                 <td class="content-cell" style="padding: 35px;">
                                     <h2 style="margin-top: 0;
         color: #2F3133;
-        font-size: 16px;
+        font-size: 20px;
         font-weight: bold;
         text-align: left;">Здравствуйте, {{$username}}</h2>
                                     <p>Вы запросили напоминание пароля на мобильном проложений Электронной системы школ EDUS </a></p>
@@ -111,10 +111,12 @@
         width: 100% !important;
         height: 100%;
         margin: 0;
-        line-height: 1.4;
         background-color: #F2F4F6;
         color: #74787E;
         -webkit-text-size-adjust: none;
+        font-size: 16px;
+        line-height: 1.5em;
+        text-align: left;
     }
     p,
     ul,
