@@ -32,6 +32,6 @@ class SendPasswordMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.passwordMail');
+        return $this->view('emails.passwordMail')->subject('Восстановление пароля для '.$this->username);
     }
 }
