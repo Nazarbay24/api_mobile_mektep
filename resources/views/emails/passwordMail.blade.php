@@ -4,24 +4,72 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Электронная система школ EDUS</title>
 </head>
-<body>
+<body style="width: 100% !important;
+        height: 100%;
+        margin: 0;
+        line-height: 1.4;
+        background-color: #F2F4F6;
+        color: #74787E;
+        -webkit-text-size-adjust: none;">
 
 
-<table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0">
+<table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" style="
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        background-color: #F2F4F6;">
     <tr>
         <td align="center">
-            <table class="email-content" width="100%" cellpadding="0" cellspacing="0">
+            <table class="email-content" width="100%" cellpadding="0" cellspacing="0" style="
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                -premailer-width: 100%;
+                -premailer-cellpadding: 0;
+                -premailer-cellspacing: 0;">
                 <tr>
-                    <td class="email-masthead">
-                        <h3 class="email-masthead_name">EDU<span>S</span></h3>
+                    <td class="email-masthead" style="
+                        padding: 25px 0;
+                        text-align: center;">
+                        <h3 class="email-masthead_name" style="font-size: 20px;
+        font-weight: bold;
+        color: #0094ce;
+        text-decoration: none;
+        text-align: center;
+        padding: 0px;
+        margin: 0px;
+        text-shadow: 0 1px 0 white;
+        ">EDU<span style="color: #ffb900;
+        ">S</span></h3>
                     </td>
                 </tr>
                 <tr>
-                    <td class="email-body" width="100%" cellpadding="0" cellspacing="0">
-                        <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0">
+                    <td class="email-body" width="100%" cellpadding="0" cellspacing="0" style="width: 100%;
+        margin: 0;
+        padding: 0;
+        -premailer-width: 100%;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        border-top: 1px solid #EDEFF2;
+        border-bottom: 1px solid #EDEFF2;
+        background-color: #FFFFFF;">
+                        <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0" style="width: 570px;
+        margin: 0 auto;
+        padding: 0;
+        -premailer-width: 570px;
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        background-color: #FFFFFF;">
                             <tr>
-                                <td class="content-cell">
-                                    <h2>Здравствуйте, {{$username}}</h2>
+                                <td class="content-cell" style="padding: 35px;">
+                                    <h2 style="margin-top: 0;
+        color: #2F3133;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: left;">Здравствуйте, {{$username}}</h2>
                                     <p>Вы запросили напоминание пароля на мобильном проложений Электронной системы школ EDUS </a></p>
                                     <p>
                                     <table style="background-color:#f5f5f5" cellpadding="10" cellspacing="0" border="0" width="100%">
