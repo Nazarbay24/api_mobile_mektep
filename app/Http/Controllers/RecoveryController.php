@@ -24,8 +24,8 @@ class RecoveryController extends Controller
 
         $res = $this->repository->findUser($surname, $iin, $email);
 
-        if     ($res['code'] == 404) return response()->json([$res['message']], 404);
-        elseif ($res['code'] == 200) return response()->json($res['message'], 200);
+        if     ($res['code'] == 404) return response()->json(["message" => $res['message']], 404);
+        elseif ($res['code'] == 200) return response()->json(["message" => $res['message']], 200);
     }
 
     public function sendPasswordMail(Request $request) {
