@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'year' => env("YEAR", 2021),
+    'year' => env("YEAR", 2022),
 
     'chetvert' => [
         "1" => [
