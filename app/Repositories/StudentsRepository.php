@@ -7,6 +7,7 @@ use App\Models\Predmet;
 use App\Models\Student;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 
 class StudentsRepository
@@ -79,7 +80,7 @@ class StudentsRepository
         unset($classInfo['group']);
 
 
-        $chetvertMarks = $this->chetvertModel
+        $chetvertMarks = Schema::hasTable('table_name') ? $this->chetvertModel
             ->select('id_student',
                 DB::raw('count(id_chet)'),
                 DB::raw('sum(mark)'),
@@ -88,12 +89,16 @@ class StudentsRepository
             ->where('mark', '>=', 1)
             ->where('mark', '<=', 5)
             ->groupBy('id_student')
-            ->get()->all();
+            ->get()->all()
+        : null;
 
         $ulgerim = [];
-        foreach ($chetvertMarks as $item) {
-            $ulgerim[$item['id_student']] = number_format($item['mark'], 1);;
+        if ($chetvertMarks) {
+            foreach ($chetvertMarks as $item) {
+                $ulgerim[$item['id_student']] = number_format($item['mark'], 1);;
+            }
         }
+
 
         $students = Student::
             select('id',
