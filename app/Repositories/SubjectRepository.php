@@ -103,7 +103,12 @@ class SubjectRepository
                 ->orderBy('date', 'desc')
                 ->first();
 
-            $mySubjects[$key]['prev_tema'] = $prev_tema->tema != null ? $prev_tema->tema : __("Не задано");
+            if($prev_tema) {
+                $mySubjects[$key]['prev_tema'] = $prev_tema->tema != null ? $prev_tema->tema : __("Не задано");
+            }
+            else {
+                $mySubjects[$key]['prev_tema'] = __("Не задано");
+            }
             $mySubjects[$key]['progress'] = __('Пройдено').' '.(round(($item['sagat_passed'] / $item['sagat']) * 100).'%');
             $mySubjects[$key]['class'] = $item['class'].'«'.$item['group'].'»';
             unset($mySubjects[$key]['group']);
