@@ -76,7 +76,7 @@ class DiaryRepository
                 ->orderBy('date', 'desc')
                 ->first();
 
-            $diary[$key]['prev_submitted'] = $prev_tema['prev_submitted'];
+            $diary[$key]['prev_submitted'] = $prev_tema['prev_submitted'] != null ? $prev_tema['prev_submitted'] : __("Не задано");
             $diary[$key]['prev_tema'] = $prev_tema['tema'] != null ? $prev_tema['tema'] : __("Не задано");
             $diary[$key]['tema'] = $item['tema'] != null ? $item['tema'] : __("Не задано");
 
