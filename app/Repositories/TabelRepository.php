@@ -9,6 +9,7 @@ use App\Models\Journal;
 use App\Models\Predmet;
 use App\Models\PredmetCriterial;
 use App\Models\Student;
+use Illuminate\Support\Facades\Schema;
 
 class TabelRepository
 {
@@ -45,17 +46,21 @@ class TabelRepository
         $predmet = $this->getPredmet($id_predmet);
         $studentsList = $this->getStudentsList($predmet['id_class'], $predmet['subgroup'], $predmet['id_subgroup']);
 
-        $chetvertMarks = $this->chetvertModel
+        $chetvertMarks = Schema::hasTable($this->chetvertModel->getTable()) ? $this->chetvertModel
             ->where('id_class', '=', $predmet['id_class'])
             ->where('id_predmet', '=', $predmet['id_predmet'])
             ->orderBy('chetvert_nomer')
-            ->get()->all();
+            ->get()->all()
+        : null;
 
-        foreach ($chetvertMarks as $mark) {
-            $key = array_search($mark['id_student'], array_column($studentsList, 'id'));
+        if ($chetvertMarks) {
+            foreach ($chetvertMarks as $mark) {
+                $key = array_search($mark['id_student'], array_column($studentsList, 'id'));
 
-            $studentsList[$key][$mark['chetvert_nomer']] = $mark['mark'];
+                $studentsList[$key][$mark['chetvert_nomer']] = $mark['mark'];
+            }
         }
+
 
         return [
             'predmet_name' => $predmet['predmet_name'],
