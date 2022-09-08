@@ -52,6 +52,19 @@ class JournalRepository
         $studentsList = $this->getStudentsList($predmet['id_mektep'], $predmet['id_class'], $predmet['subgroup'], $predmet['id_subgroup']);
         $datesMarksFormative = $this->getDatesMarksFormative($chetvert, $isCurrentChetvert, $predmet['id_predmet'], $predmet['id_class']);
 
+        if ($canMark) {
+            $chetvertDates = config('mektep_config.chetvert');
+            $diary = $this->diaryModel
+                ->where('id_predmet', '=', $predmet['id_predmet'])
+                ->where('date', '>=', $chetvertDates[$chetvert]['start'])
+                ->where('date', '<=', $chetvertDates[$chetvert]['end'])
+                ->orderBy('date', 'desc')
+                ->first();
+
+            if (!$diary) {
+                $canMark = false;
+            }
+        }
 
 
         return [
@@ -123,12 +136,14 @@ class JournalRepository
 
 
         foreach ($studentsList as $key => $student) {
+
             if ($diary['opened'] == 0) {
                 $studentsList[$key]['can_mark'] = false;
             }
             else {
                 $studentsList[$key]['can_mark'] = array_key_exists($student['id'], $studentsChetvertMarks) ? false : true;
             }
+
 
             foreach ($datesMarksFormative['journalMarks'] as $date) {
 
