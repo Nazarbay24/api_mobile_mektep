@@ -30,7 +30,7 @@ class DiaryController extends Controller
         $week += 13;
 
         $monday = date("Y-m-d", strtotime('monday '.$week.' week'));
-        $saturday = date("Y-m-d", strtotime('saturday '.($week+1).' week'));
+        $saturday = date_add($monday, date_interval_create_from_date_string("6 day"));
         $diary = $this->repository->diary($monday, $saturday);
 
         $monday = date("d.m", strtotime($monday));
