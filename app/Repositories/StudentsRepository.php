@@ -80,7 +80,7 @@ class StudentsRepository
         unset($classInfo['group']);
 
 
-        $chetvertMarks = Schema::hasTable('table_name') ? $this->chetvertModel
+        $chetvertMarks = Schema::hasTable($this->chetvertModel->getTable()) ? $this->chetvertModel
             ->select('id_student',
                 DB::raw('count(id_chet)'),
                 DB::raw('sum(mark)'),
@@ -104,9 +104,9 @@ class StudentsRepository
             select('id',
                 'name',
                 'surname')
-                ->where('id_class', '=', $id_class)
-                ->orderBy('surname')
-                ->get()->all();
+            ->where('id_class', '=', $id_class)
+            ->orderBy('surname')
+            ->get()->all();
 
         $studentsList = [];
         foreach ($students as $key => $item) {
@@ -127,14 +127,18 @@ class StudentsRepository
     public function studentTabel($id_student) {
         $student = Student::where('id', '=', $id_student)->first();
 
-        $chetvertMarksQuery = $this->chetvertModel
+        $chetvertMarksQuery = Schema::hasTable($this->chetvertModel->getTable()) ? $this->chetvertModel
             ->where('id_student', '=', $id_student)
-            ->get()->all();
+            ->get()->all()
+        : null;
 
         $chetvertMarks = [];
-        foreach ($chetvertMarksQuery as $item) {
-            $chetvertMarks[$item['id_predmet']][$item['chetvert_nomer']] = strval($item['mark']);
+        if ($chetvertMarksQuery) {
+            foreach ($chetvertMarksQuery as $item) {
+                $chetvertMarks[$item['id_predmet']][$item['chetvert_nomer']] = strval($item['mark']);
+            }
         }
+
 
         $predmetsQuery = $this->predmetModel
             ->select($this->predmetModel->getTable().'.id as id',

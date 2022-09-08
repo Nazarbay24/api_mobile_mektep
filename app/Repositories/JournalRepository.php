@@ -10,6 +10,7 @@ use App\Models\Journal as Model;
 use App\Models\Predmet;
 use App\Models\PredmetCriterial;
 use App\Models\Student;
+use Illuminate\Support\Facades\Schema;
 
 
 class JournalRepository
@@ -106,16 +107,20 @@ class JournalRepository
                 ->first();
         }
 
-        $studentsChetvertMarksQuery = $this->chetvertModel
+        $studentsChetvertMarksQuery = Schema::hasTable($this->chetvertModel->getTable()) ? $this->chetvertModel
             ->select('id_student')
             ->where('id_predmet', '=', $predmet['id_predmet'])
             ->where('id_class', '=', $predmet['id_class'])
-            ->get()->all();
+            ->get()->all()
+        : null;
 
         $studentsChetvertMarks = [];
-        foreach ($studentsChetvertMarksQuery as $item) {
-            $studentsChetvertMarks[$item['id_student']] = true;
+        if ($studentsChetvertMarksQuery) {
+            foreach ($studentsChetvertMarksQuery as $item) {
+                $studentsChetvertMarks[$item['id_student']] = true;
+            }
         }
+
 
         foreach ($studentsList as $key => $student) {
             if ($diary['opened'] == 0) {
