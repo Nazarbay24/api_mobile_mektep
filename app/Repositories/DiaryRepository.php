@@ -77,11 +77,11 @@ class DiaryRepository
                 ->first();
 
             if ($prev_tema) {
-                $diary[$key]['prev_submitted'] = $prev_tema['prev_submitted'] != null ? $prev_tema['prev_submitted'] : __("Не задано");
+                $diary[$key]['prev_submitted'] = $prev_tema['prev_submitted'] != null ? $prev_tema['prev_submitted'] : 0;
                 $diary[$key]['prev_tema'] = $prev_tema['tema'] != null ? $prev_tema['tema'] : __("Не задано");
             }
             else {
-                $diary[$key]['prev_submitted'] = __("Не задано");
+                $diary[$key]['prev_submitted'] = $prev_tema['prev_submitted'] != null ? $prev_tema['prev_submitted'] : 0;
                 $diary[$key]['prev_tema'] = __("Не задано");
             }
 

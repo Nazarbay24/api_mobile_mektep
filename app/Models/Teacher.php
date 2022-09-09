@@ -32,20 +32,6 @@ class Teacher extends Authenticatable implements JWTSubject
     }
     public function generateAuthToken($many = false)
     {
-        if($many) {
-            $customClaims = [
-                'iin' => $this->iin,
-                'isChoiceToken' => 'true'
-            ];
-            return JWTAuth::claims($customClaims)->fromUser($this);
-        }
-        else {
-            $customClaims = [
-                'iin' => $this->iin,
-                'id' => $this->id,
-                'id_mektep' => $this->id_mektep,
-            ];
-            return JWTAuth::claims($customClaims)->fromUser($this);
-        }
+        return JWTAuth::fromUser($this);
     }
 }
