@@ -43,7 +43,7 @@ class AuthController extends Controller
 
     public function getSchools()
     {
-        $schools = $this->repository->getSchools();
+        $schools = $this->repository->getSchools(auth()->user()->iin);
 
         if ($schools) {
             return response()->json($schools, 200);
@@ -56,7 +56,7 @@ class AuthController extends Controller
 
     public function choiceSchool($loacle, $id)
     {
-        $user = $this->repository->choiceSchool($id);
+        $user = $this->repository->choiceSchool($id, auth()->user()->iin);
 
         if ($user) return response()->json([  'token' => $user->generateAuthToken()], 200);
         else       return response()->json(['message' => __('Школа не найдена')], 404);

@@ -32,9 +32,9 @@ class TeacherRepository {
     }
 
 
-    public function getSchools()
+    public function getSchools($iin)
     {
-        return $this->model
+        $schools = $this->model
             ->select('id_mektep as id',
                 'specialty',
                 'mektepter.name_kaz as name_kk',
@@ -45,19 +45,33 @@ class TeacherRepository {
                 'edu_punkt.punkt_rus as punkt_ru')
             ->join('mektepter', $this->model->table.'.id_mektep', '=', 'mektepter.id')
             ->join('edu_punkt', 'mektepter.edu_punkt', '=', 'edu_punkt.id')
-            ->where('iin', auth()->user()->iin)
+            ->where('iin', $iin)
             ->where('status', 1)
             ->where('blocked', 0)
             ->get()->all();
+
+        if (count($schools) == 1) {
+            $schools[0]->device = 'mobile';
+            $schools[0]->last_visit = date('Y-m-d H:i:s');
+            $schools[0]->save();
+        }
+
+        return $schools;
     }
 
 
-    public function choiceSchool($id) {
-        return $this->model
-            ->where('iin', auth()->user()->iin)
+    public function choiceSchool($id, $iin) {
+        $account = $this->model
+            ->where('iin', $iin)
             ->where('id_mektep', $id)
             ->where('status', 1)
             ->where('blocked', 0)
             ->first();
+
+        $account->device = 'mobile';
+        $account->last_visit = date('Y-m-d H:i:s');
+        $account->save();
+
+        return $account;
     }
 }

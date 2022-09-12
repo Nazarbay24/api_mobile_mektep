@@ -14,6 +14,7 @@ class Teacher extends Authenticatable implements JWTSubject
     use HasFactory;
 
     protected $table = 'mektep_teacher';
+    public $timestamps = false;
 
 
     public function mektep() {
