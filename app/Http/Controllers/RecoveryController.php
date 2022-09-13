@@ -36,7 +36,7 @@ class RecoveryController extends Controller
         $user = $this->repository->getUser($surname, $iin, $email);
 
         if ($user) {
-            Mail::to('uzen57@gmail.com')->send(new SendPasswordMail($user->surname.' '.$user->name, $user->parol));
+            Mail::to($user->email)->send(new SendPasswordMail($user->surname.' '.$user->name, $user->parol));
 
             return response()->json(["message" => __('На вашу почту отправлено сведение о восстановлении доступа, пожалуйста, проверьте указанную почту (обратите внимание, в некоторых случаях письмо может оказаться в Спам-папке). В целях безопасности, повторный запрос на эту почту вы можете сделать через 30 мин.')], 200);
         }
