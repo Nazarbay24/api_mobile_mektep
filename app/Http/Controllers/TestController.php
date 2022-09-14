@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -25,6 +26,7 @@ class TestController extends Controller
 
         if ($new_token = auth()->refresh()) {
             Redis::set('teacher_token:'.$user_id, $new_token, 'EX', 60*60*24*30);
+            Teacher::where('id', $user_id)->update(['device' => 'mobile', 'last_visit' => date('Y-m-d H:i:s')]);
 
             return response()->json(['token' => $new_token],402);
         }

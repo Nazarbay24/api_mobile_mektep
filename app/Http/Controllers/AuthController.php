@@ -62,7 +62,13 @@ class AuthController extends Controller
     {
         $user = $this->repository->choiceSchool($id, auth()->user()->iin);
 
-        if ($user) return response()->json([  'token' => $user->generateAuthToken()], 200);
-        else       return response()->json(['message' => __('Школа не найдена')], 404);
+        if ($user) {
+            auth()->invalidate();
+            $token = $user->generateAuthToken();
+            Redis::set('teacher_token:'.$user->id, $token, 'EX', 60*60*24*30);
+
+            return response()->json(['token' => $token], 200);
+        }
+        else return response()->json(['message' => __('Школа не найдена')], 404);
     }
 }
