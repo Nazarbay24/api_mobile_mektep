@@ -28,6 +28,6 @@ class TestController extends Controller
 //            return response()->json(['message' => 'Token is Expired'],401);
 //        }
 
-        return Redis::get('teacher');
+        return Redis::keys('*');
     }
 }
