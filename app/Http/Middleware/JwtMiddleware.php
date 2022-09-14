@@ -2,9 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Teacher;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 use JWTAuth;
 
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
@@ -26,10 +28,25 @@ class JwtMiddleware extends BaseMiddleware
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
                 return response()->json(['message' => 'Token is Invalid'], 401);
-            }else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
+            }
+            else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
+                $user_id = JWTAuth::getJWTProvider()->decode($request->bearerToken())['sub'];
+                $token = Redis::get('teacher_token:'.$user_id);
+
+                if ($request->bearerToken() != $token) {
+                    return response()->json(['message' => 'Token is Expired'],401);
+                }
+
+                if ($new_token = auth()->refresh()) {
+                    Redis::set('teacher_token:'.$user_id, $new_token, 'EX', 60*60*24*30);
+                    Teacher::where('id', $user_id)->update(['device' => 'mobile', 'last_visit' => date('Y-m-d H:i:s')]);
+
+                    return response()->json(['token' => $new_token],402);
+                }
 
                 return response()->json(['message' => 'Token is Expired'],401);
-            }else{
+            }
+            else{
                 return response()->json(['message' => 'Authorization Token not found'], 401);
             }
         }
