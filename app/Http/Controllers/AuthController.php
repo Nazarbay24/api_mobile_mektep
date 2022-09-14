@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\TeacherRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 
