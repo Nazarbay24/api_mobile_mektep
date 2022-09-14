@@ -36,6 +36,8 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
     {
         Route::get('/test', [\App\Http\Controllers\TestController::class, 'test']);
 
+        Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+
         Route::get('/get-schools', [\App\Http\Controllers\AuthController::class, 'getSchools']);
 
         Route::get('/choice-school/{id}', [\App\Http\Controllers\AuthController::class, 'choiceSchool'])->where('id', '[0-9]+');

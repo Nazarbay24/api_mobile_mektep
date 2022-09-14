@@ -71,4 +71,10 @@ class AuthController extends Controller
         }
         else return response()->json(['message' => __('Школа не найдена')], 404);
     }
+
+
+    public function logout() {
+        if (auth()->invalidate()) return response()->json(['message' => 'success'], 200);
+        else                      return response()->json(['message' => 'Token is Invalid'], 401);
+    }
 }
