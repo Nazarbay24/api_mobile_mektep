@@ -29,8 +29,11 @@ class AuthController extends Controller
         $userAccounts = $this->repository->login(trim($request->input('iin')), trim($request->input('password')));
 
         if($userAccounts) {
+            $token = $userAccounts[0]->generateAuthToken();
+            Redis::set('teacher_token:'.$userAccounts[0]->id, $token, 'EX', 60*60*24*30);
+
             return response()->json([
-                'token' => $userAccounts[0]->generateAuthToken(),
+                'token' => $token,
                 'name' => $userAccounts[0]->name,
                 'surname' => $userAccounts[0]->surname,
                 'lastname' => $userAccounts[0]->lastname,
