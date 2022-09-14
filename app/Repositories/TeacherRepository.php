@@ -25,7 +25,14 @@ class TeacherRepository {
             ->get()->all();
 
         foreach ($userAccounts as $user) {
-            if ($user->parol == $password) return $userAccounts;
+            if ($user->parol == $password) {
+                if (count($userAccounts) == 1) {
+                    $userAccounts[0]->device = 'mobile';
+                    $userAccounts[0]->last_visit = date('Y-m-d H:i:s');
+                    $userAccounts[0]->save();
+                }
+                return $userAccounts;
+            }
         }
 
         return false;
@@ -49,12 +56,6 @@ class TeacherRepository {
             ->where('status', 1)
             ->where('blocked', 0)
             ->get()->all();
-
-        if (count($schools) == 1) {
-            $schools[0]->device = 'mobile';
-            $schools[0]->last_visit = date('Y-m-d H:i:s');
-            $schools[0]->save();
-        }
 
         return $schools;
     }
