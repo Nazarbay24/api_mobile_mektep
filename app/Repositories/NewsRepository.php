@@ -24,7 +24,7 @@ class NewsRepository
             ->select('id', 'title', 'date')
             ->where('lang', '=', $this->lang)
             ->orderBy('date','desc')
-            ->get()->take(5);
+            ->get()->take(10);
 
         return $news;
     }
