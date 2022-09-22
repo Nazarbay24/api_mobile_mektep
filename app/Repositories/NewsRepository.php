@@ -31,9 +31,14 @@ class NewsRepository
 
     public function getNewById($id_new)
     {
-        return $this->model
+        $item = $this->model
             ->select('date', 'title', 'text')
             ->where('id', '=', $id_new)
             ->first();
+
+        if ($item) {
+            $this->model->where('id', '=', $id_new)->increment('views');
+        }
+        return $item;
     }
 }
