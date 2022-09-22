@@ -34,8 +34,6 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
     Route::group(['middleware' => ['jwt.verify']], function()
     {
-        Route::get('/test', [\App\Http\Controllers\TestController::class, 'test']);
-
         Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
 
         Route::get('/get-schools', [\App\Http\Controllers\AuthController::class, 'getSchools']);
