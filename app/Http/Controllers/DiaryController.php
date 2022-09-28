@@ -27,7 +27,7 @@ class DiaryController extends Controller
 
     public function diary($locale, $week = -1) {
         $this->repository->init((int) auth()->user()->id_mektep);
-        $week += 12;
+        //$week += 12;
 
         $monday = date("Y-m-d", strtotime('monday '.$week.' week'));
         $saturday = date("Y-m-d", strtotime("+6 days", strtotime($monday)));
