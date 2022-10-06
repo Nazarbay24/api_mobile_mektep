@@ -98,16 +98,26 @@ class TabelRepository
         $criterialMax[4] = json_decode($predmet['max_ch_4']);
 
         // количество СОР за четверть
-        $sorCount[1] = $predmetCriterial['num_sor_1'];
-        $sorCount[2] = $predmetCriterial['num_sor_2'];
-        $sorCount[3] = $predmetCriterial['num_sor_3'];
-        $sorCount[4] = $predmetCriterial['num_sor_4'];
+        $sorCount[1] = is_array($criterialMax[1]) ? count($criterialMax[1])-1 : 0;
+        $sorCount[2] = is_array($criterialMax[1]) ? count($criterialMax[2])-1 : 0;
+        $sorCount[3] = is_array($criterialMax[1]) ? count($criterialMax[3])-1 : 0;
+        $sorCount[4] = is_array($criterialMax[1]) ? count($criterialMax[4])-1 : 0;
+
+//        $sorCount[1] = $predmetCriterial['num_sor_1'];
+//        $sorCount[2] = $predmetCriterial['num_sor_2'];
+//        $sorCount[3] = $predmetCriterial['num_sor_3'];
+//        $sorCount[4] = $predmetCriterial['num_sor_4'];
 
         // количество СОЧ за четверть
-        $sochCount[1] = $predmetCriterial['num_soch_1'];
-        $sochCount[2] = $predmetCriterial['num_soch_2'];
-        $sochCount[3] = $predmetCriterial['num_soch_3'];
-        $sochCount[4] = $predmetCriterial['num_soch_4'];
+        $sochCount[1] = is_array($criterialMax[1]) && $criterialMax[1][0] != null ? 1 : 0;
+        $sochCount[2] = is_array($criterialMax[2]) && $criterialMax[2][0] != null ? 1 : 0;
+        $sochCount[3] = is_array($criterialMax[3]) && $criterialMax[3][0] != null ? 1 : 0;
+        $sochCount[4] = is_array($criterialMax[4]) && $criterialMax[4][0] != null ? 1 : 0;
+
+//        $sochCount[1] = $predmetCriterial['num_soch_1'];
+//        $sochCount[2] = $predmetCriterial['num_soch_2'];
+//        $sochCount[3] = $predmetCriterial['num_soch_3'];
+//        $sochCount[4] = $predmetCriterial['num_soch_4'];
 
 
 // ЧЕТВЕРТНОЙ начало *******************
