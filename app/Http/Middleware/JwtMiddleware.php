@@ -40,8 +40,8 @@ class JwtMiddleware extends BaseMiddleware
                 if ($new_token = auth()->refresh()) {
                     Redis::set('teacher_token:'.$user_id, $new_token, 'EX', 60*60*24*30);
                     $teacherCheckAndUpdate = Teacher::where('id', $user_id)
-                        ->andWhere('status', 1)
-                        ->andWhere('blocked', 0)
+                        ->where('status', 1)
+                        ->where('blocked', 0)
                         ->update(['device' => 'mobile', 'last_visit' => date('Y-m-d H:i:s')]);
 
                     if ($teacherCheckAndUpdate > 0) {
