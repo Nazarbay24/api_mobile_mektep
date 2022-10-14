@@ -26,7 +26,7 @@ class JwtMiddleware extends BaseMiddleware
         try {
             JWTAuth::parseToken()->authenticate();
         } catch (Exception $e) {
-            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
+            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
                 return response()->json(['message' => 'Token is Invalid'], 401);
             }
             else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
@@ -39,9 +39,17 @@ class JwtMiddleware extends BaseMiddleware
 
                 if ($new_token = auth()->refresh()) {
                     Redis::set('teacher_token:'.$user_id, $new_token, 'EX', 60*60*24*30);
-                    Teacher::where('id', $user_id)->update(['device' => 'mobile', 'last_visit' => date('Y-m-d H:i:s')]);
+                    $teacherCheckAndUpdate = Teacher::where('id', $user_id)
+                        ->andWhere('status', 1)
+                        ->andWhere('blocked', 0)
+                        ->update(['device' => 'mobile', 'last_visit' => date('Y-m-d H:i:s')]);
 
-                    return response()->json(['token' => $new_token],402);
+                    if ($teacherCheckAndUpdate > 0) {
+                        return response()->json(['token' => $new_token], 402);
+                    }
+                    else {
+                        return response()->json(['message' => 'Token is Expired'],401);
+                    }
                 }
 
                 return response()->json(['message' => 'Token is Expired'],401);
