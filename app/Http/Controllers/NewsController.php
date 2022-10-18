@@ -17,8 +17,16 @@ class NewsController extends Controller
 
     public function newsList() {
         $news = $this->repository->newsList();
+        $newsList = [];
 
-        return response()->json($news, 200);
+        foreach ($news as $item) {
+            if ($item['image_url'] == '') {
+                $item['image_url'] = 'https://mobile.mektep.edu.kz/uploads/images/default_background.jpg';
+            }
+            $newsList[] = $item;
+        }
+
+        return response()->json($newsList, 200);
     }
 
 
