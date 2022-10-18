@@ -21,7 +21,7 @@ class NewsRepository
     public function newsList()
     {
         $news = $this->model
-            ->select('id', 'title', 'date')
+            ->select('id', 'title', 'date', 'filename as image_url')
             ->where('lang', '=', $this->lang)
             ->orderBy('date','desc')
             ->get()->take(10);
@@ -32,7 +32,7 @@ class NewsRepository
     public function getNewById($id_new)
     {
         $item = $this->model
-            ->select('date', 'title', 'text')
+            ->select('date', 'title', 'text', 'filename as image_url')
             ->where('id', '=', $id_new)
             ->first();
 
