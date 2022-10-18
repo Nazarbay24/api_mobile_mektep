@@ -24,7 +24,7 @@ class NewsRepository
             ->select('id', 'title', 'date', 'filename as image_url')
             ->where('lang', '=', $this->lang)
             ->orderBy('date','desc')
-            ->get()->take(10);
+            ->get()->take(20);
 
         return $news;
     }
