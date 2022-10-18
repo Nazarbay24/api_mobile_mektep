@@ -23,7 +23,7 @@ class NewsRepository
         $news = $this->model
             ->select('id', 'title', 'date', 'filename as image_url')
             ->where('lang', '=', $this->lang)
-            ->orderBy('date','desc')
+            ->orderBy('datetime','desc')
             ->get()->take(20);
 
         return $news;
