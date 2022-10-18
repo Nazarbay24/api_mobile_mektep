@@ -33,6 +33,10 @@ class NewsController extends Controller
     public function getNew($locale, $id_new) {
         $new = $this->repository->getNewById($id_new);
 
+        if ($new['image_url'] == '') {
+            $new['image_url'] = 'https://mobile.mektep.edu.kz/uploads/images/default_background.jpg';
+        }
+
         return response()->json($new, 200);
     }
 }
