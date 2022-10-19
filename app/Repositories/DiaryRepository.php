@@ -115,6 +115,9 @@ class DiaryRepository
             'message_count' => count($messages)
         ];
 
+        $todayInfo = $this->getCurrentTime();
+        $todayInfo['message_count'] = count($messages);
+
         return [
             "info" => $todayInfo,
             "diary" => $diary
@@ -211,5 +214,19 @@ class DiaryRepository
         $diary->opened = 1;
 
         return $diary->save();
+    }
+
+
+    public function getCurrentTime() {
+        $date = date("Y-m-d");
+        $dayOfWeek = date('w', strtotime($date));
+        $dayOfMonth = date('d', strtotime($date));
+        $month = date('m', strtotime($date));
+
+        return [
+            'current_time' => date('Y-m-d H:i:s'), //заменить на текущую дату date('Y-m-d H:i:s')
+            'day_number' => $dayOfWeek,
+            'day' => __('d_'.$dayOfWeek).', '.ltrim($dayOfMonth, 0).' '.__('m_'.$month),
+        ];
     }
 }

@@ -25,6 +25,8 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
     Route::get('/statistics', [\App\Http\Controllers\StatisticsController::class, 'getStatistics']);
 
+    Route::get('/get-current-time', [\App\Http\Controllers\DiaryController::class, 'getCurrentTime']);
+
     Route::prefix('recovery')->group(function ()
     {
         Route::post('/find', [\App\Http\Controllers\RecoveryController::class, 'findUser']);
@@ -81,7 +83,6 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
             Route::post('/delete-message', [\App\Http\Controllers\MessangerController::class, 'deleteMessage']);
         });
     });
-
 });
 
 

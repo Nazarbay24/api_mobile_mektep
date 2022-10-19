@@ -43,4 +43,11 @@ class DiaryController extends Controller
             "diary" => $diary
         ], 200);
     }
+
+
+    public function getCurrentTime() {
+        $currentTime = $this->repository->getCurrentTime();
+
+        return response()->json(['data' => $currentTime], 200);
+    }
 }
