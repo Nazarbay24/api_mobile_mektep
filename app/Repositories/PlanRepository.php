@@ -36,6 +36,7 @@ class PlanRepository
 
         foreach ($plan as $key => $item) {
             $plan[$key]['sagat'] = $item['sagat'].' '.__('ч.');
+            $plan[$key]['title'] = str_replace("\r\n",'', $item['title']);
         }
 
         return $plan;

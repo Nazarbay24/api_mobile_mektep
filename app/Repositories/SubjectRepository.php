@@ -104,7 +104,7 @@ class SubjectRepository
                 ->first();
 
             if($prev_tema) {
-                $mySubjects[$key]['prev_tema'] = $prev_tema->tema != null ? $prev_tema->tema : __("Не задано");
+                $mySubjects[$key]['prev_tema'] = $prev_tema->tema != null ? str_replace("\r\n",'', $prev_tema->tema) : __("Не задано");
             }
             else {
                 $mySubjects[$key]['prev_tema'] = __("Не задано");
