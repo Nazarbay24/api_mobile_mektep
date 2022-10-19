@@ -32,7 +32,7 @@ class NewsRepository
     public function getNewById($id_new)
     {
         $item = $this->model
-            ->select('date', 'title', 'text', 'filename as image_url')
+            ->select('date', 'title', 'text', 'datetime', 'filename as image_url')
             ->where('id', '=', $id_new)
             ->first();
 

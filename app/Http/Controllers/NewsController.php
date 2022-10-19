@@ -47,6 +47,15 @@ class NewsController extends Controller
             $new['image_url'] = 'https://mobile.mektep.edu.kz/uploads/images/default_background.jpg';
         }
 
+        $strTime = strtotime($new['datetime']);
+        $dayOfMonth = date('d', $strTime);
+        $month = date('m', $strTime);
+        $year = date('Y', $strTime);
+        $time = date('H:i', $strTime);
+
+        $new['date'] = ltrim($dayOfMonth, 0).' '.__('m_'.$month).' '.$year.' '.$time;
+        unset($new['datetime']);
+
         return response()->json($new, 200);
     }
 }
