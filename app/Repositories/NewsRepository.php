@@ -21,7 +21,7 @@ class NewsRepository
     public function newsList()
     {
         $news = $this->model
-            ->select('id', 'title', 'date', 'filename as image_url')
+            ->select('id', 'title', 'datetime', 'filename as image_url')
             ->where('lang', '=', $this->lang)
             ->orderBy('datetime','desc')
             ->get()->take(20);

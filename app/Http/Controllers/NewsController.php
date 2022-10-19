@@ -23,6 +23,16 @@ class NewsController extends Controller
             if ($item['image_url'] == '') {
                 $item['image_url'] = 'https://mobile.mektep.edu.kz/uploads/images/default_background.jpg';
             }
+
+            $strTime = strtotime($item['datetime']);
+            $dayOfMonth = date('d', $strTime);
+            $month = date('m', $strTime);
+            $year = date('Y', $strTime);
+            $time = date('H:i', $strTime);
+
+            $item['date'] = ltrim($dayOfMonth, 0).' '.__('m_'.$month).' '.$year.' '.$time;
+            unset($item['datetime']);
+
             $newsList[] = $item;
         }
 
