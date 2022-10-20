@@ -27,8 +27,6 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
     Route::get('/get-current-time', [\App\Http\Controllers\DiaryController::class, 'getCurrentTime']);
 
-    Route::post('/check-auth', [\App\Http\Controllers\AuthController::class, 'checkAuth']);
-
     Route::prefix('recovery')->group(function ()
     {
         Route::post('/find', [\App\Http\Controllers\RecoveryController::class, 'findUser']);
@@ -39,6 +37,8 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
     Route::group(['middleware' => ['jwt.verify']], function()
     {
         Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+
+        Route::post('/check-auth', [\App\Http\Controllers\AuthController::class, 'checkAuth']);
 
         Route::get('/get-schools', [\App\Http\Controllers\AuthController::class, 'getSchools']);
 
