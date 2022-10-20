@@ -26,7 +26,7 @@ class AuthController extends Controller
             "password" => "required"
         ]);
 
-        $userAccounts = $this->repository->login(trim($request->input('iin')), trim($request->input('password')));
+        $userAccounts = $this->repository->login(trim($request->input('iin')), trim($request->input('password')), $request->ip());
 
         if($userAccounts) {
             $token = $userAccounts[0]->generateAuthToken();
@@ -58,9 +58,9 @@ class AuthController extends Controller
     }
 
 
-    public function choiceSchool($loacle, $id)
+    public function choiceSchool($loacle, $id, Request $request)
     {
-        $user = $this->repository->choiceSchool($id, auth()->user()->iin);
+        $user = $this->repository->choiceSchool($id, auth()->user()->iin, $request->ip());
 
         if ($user) {
             auth()->invalidate();
@@ -74,10 +74,10 @@ class AuthController extends Controller
 
 
     public function checkAuth(Request $request) {
-        return response()->json([
-            'user_agent' => $request->header('User-Agent'),
-            'ip' => $request->ip()
-        ], 200);
+        $checkAndLog = $this->repository->teacherLog(auth()->user()->id, $request->ip(), $request->input('device_info'));
+
+        if ($checkAndLog) return response()->json(['message' => 'OK'], 200);
+        else              return response()->json(['message' => 'Token is Invalid'],401);
     }
 
 
