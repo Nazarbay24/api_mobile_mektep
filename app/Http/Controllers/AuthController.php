@@ -74,7 +74,10 @@ class AuthController extends Controller
 
 
     public function checkAuth(Request $request) {
-        return response()->json($request->header('User-Agent'), 200);
+        return response()->json([
+            'user_agent' => $request->header('User-Agent'),
+            'ip' => $request->ip()
+        ], 200);
     }
 
 
