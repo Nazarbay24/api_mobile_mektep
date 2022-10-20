@@ -15,7 +15,7 @@ class NewsController extends Controller
     }
 
 
-    public function newsList() {
+    public function newsList(Request $request) {
         $news = $this->repository->newsList();
         $newsList = [];
 

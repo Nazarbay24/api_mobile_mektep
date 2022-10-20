@@ -27,6 +27,8 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
     Route::get('/get-current-time', [\App\Http\Controllers\DiaryController::class, 'getCurrentTime']);
 
+    Route::post('/check-auth', [\App\Http\Controllers\AuthController::class, 'checkAuth']);
+
     Route::prefix('recovery')->group(function ()
     {
         Route::post('/find', [\App\Http\Controllers\RecoveryController::class, 'findUser']);

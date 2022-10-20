@@ -73,6 +73,11 @@ class AuthController extends Controller
     }
 
 
+    public function checkAuth(Request $request) {
+        return response()->json($request->header('User-Agent'), 200);
+    }
+
+
     public function logout() {
         if (auth()->invalidate()) return response()->json(['message' => 'success'], 200);
         else                      return response()->json(['message' => 'Token is Invalid'], 401);

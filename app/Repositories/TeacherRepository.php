@@ -29,6 +29,7 @@ class TeacherRepository {
                 if (count($userAccounts) == 1) {
                     $userAccounts[0]->device = 'mobile';
                     $userAccounts[0]->last_visit = date('Y-m-d H:i:s');
+
                     $userAccounts[0]->save();
                 }
                 return $userAccounts;
