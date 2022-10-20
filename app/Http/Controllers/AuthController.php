@@ -74,6 +74,8 @@ class AuthController extends Controller
 
 
     public function checkAuth(Request $request) {
+        if( !$request->input('device_info' ) ) return response()->json(['message' => 'Bad Request'], 400);
+
         $checkAndLog = $this->repository->teacherLog(auth()->user()->id, $request->ip(), $request->input('device_info'));
 
         if ($checkAndLog) return response()->json(['message' => 'OK'], 200);
