@@ -99,9 +99,9 @@ class TabelRepository
 
         // количество СОР за четверть
         $sorCount[1] = is_array($criterialMax[1]) ? count($criterialMax[1])-1 : 0;
-        $sorCount[2] = is_array($criterialMax[1]) ? count($criterialMax[2])-1 : 0;
-        $sorCount[3] = is_array($criterialMax[1]) ? count($criterialMax[3])-1 : 0;
-        $sorCount[4] = is_array($criterialMax[1]) ? count($criterialMax[4])-1 : 0;
+        $sorCount[2] = is_array($criterialMax[2]) ? count($criterialMax[2])-1 : 0;
+        $sorCount[3] = is_array($criterialMax[3]) ? count($criterialMax[3])-1 : 0;
+        $sorCount[4] = is_array($criterialMax[4]) ? count($criterialMax[4])-1 : 0;
 
 //        $sorCount[1] = $predmetCriterial['num_sor_1'];
 //        $sorCount[2] = $predmetCriterial['num_sor_2'];
