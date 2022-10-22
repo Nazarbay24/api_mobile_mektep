@@ -150,6 +150,7 @@ class TabelRepository
                 $mark = 0;
                 $sorTotalGrade = 0;
                 $sochGrade = null;
+                $totalProc = null;
 
                 for ($i = 0; $i < $sorCount[$chetvert]; $i++) { // суммируем все баллы СОР за четверть
                     if (isset($criterialMarks[$student['id']][$chetvert][$i+1])) {
