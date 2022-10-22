@@ -141,7 +141,12 @@ class TabelRepository
                     $sorMaxAll = abs(array_sum($criterialMax[$chetvert]) - $sochMax);
                 }
                 else {
-                    $sorMaxAll = abs(array_sum($criterialMax[$chetvert]));
+                    if(is_array($criterialMax[$chetvert])) {
+                        $sorMaxAll = abs(array_sum($criterialMax[$chetvert]));
+                    }
+                    else {
+                        $sorMaxAll = 0;
+                    }
                 }
             }
 
