@@ -249,7 +249,7 @@ class TabelRepository
                 'is_half_year' => $isHalfYear,
                 'sor' => $sor,
                 'soch' => (bool)$sochCount[$chetvert],
-                'soch_max' => $criterialMax[$chetvert][0],
+                'soch_max' => $sochMax,
                 'students_list' => $studentsList,
             ];
         }
