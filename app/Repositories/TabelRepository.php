@@ -126,7 +126,7 @@ class TabelRepository
             $isHalfYear = ($chetvert == 2 || $chetvert == 4) && $sochCount[$chetvert-1] == 0 ? true : false; // полугодие ли этот четверть
             $formativeMarks = $this->getFormativeMarks($predmet['id_class'], $predmet['id_predmet'], $chetvert, $isHalfYear);
 
-            $sochMax = $sochCount > 0 ? $criterialMax[$chetvert][0] : 0;
+            $sochMax = $sochCount[$chetvert] > 0 ? $criterialMax[$chetvert][0] : 0;
 
             if ($isHalfYear) {  // максимально возможный балл всех СОР за четверть, если это полугодие то за 2 четверти
                 if ($sochCount[$chetvert] > 0) {
