@@ -71,6 +71,9 @@ class TabelRepository
     }
 
 
+    /**
+     * @throws \Exception
+     */
     public function criterialTabel($id_predmet, $chetvert)
     {
         $predmet = $this->getPredmet($id_predmet);
@@ -96,6 +99,10 @@ class TabelRepository
         $criterialMax[2] = json_decode($predmet['max_ch_2']);
         $criterialMax[3] = json_decode($predmet['max_ch_3']);
         $criterialMax[4] = json_decode($predmet['max_ch_4']);
+
+        if( !is_array($criterialMax[$chetvert]) ) {
+            throw new \Exception(__('СОр, СОч за этот четверть не настроено'),404);
+        }
 
         // количество СОР за четверть
         $sorCount[1] = is_array($criterialMax[1]) ? count($criterialMax[1])-1 : 0;
