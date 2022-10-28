@@ -292,7 +292,7 @@ class JournalRepository
             ->where('id_predmet', '=', $id_predmet)
             ->where('date', '>=', $chetvertDates[$chetvert]['start'])
             ->where('date', '<=', $chetvertDates[$chetvert]['end'])
-            ->orderBy('date')
+            ->orderByDesc('date')
             ->orderBy('number')
             ->get()->all();
 
