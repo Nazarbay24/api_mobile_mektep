@@ -7,22 +7,25 @@ use App\Models\News;
 class NewsRepository
 {
     protected $model;
-    protected $lang;
 
     public function __construct(News $model)
     {
         $this->model = $model;
 
-        if (app()->getLocale() == 'ru') $this->lang = 'rus';
+        if (app()->getLocale() == 'ru')      $this->lang = 'rus';
         else if (app()->getLocale() == 'kk') $this->lang = 'kaz';
     }
 
 
     public function newsList()
     {
+        $lang = 'rus';
+        if      (app()->getLocale() == 'ru') $lang = 'rus';
+        else if (app()->getLocale() == 'kk') $lang = 'kaz';
+
         $news = $this->model
             ->select('id', 'title', 'datetime', 'filename as image_url')
-            ->where('lang', '=', $this->lang)
+            ->where('lang', '=', $lang)
             ->orderBy('datetime','desc')
             ->get()->take(20);
 
