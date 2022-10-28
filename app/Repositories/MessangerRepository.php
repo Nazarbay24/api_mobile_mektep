@@ -263,7 +263,7 @@ class MessangerRepository
             ->create([
                 'otpravitel_id' => $id_teacher.'@t',
                 'poluchatel_id' => $id_parent.'@p',
-                'tema' => $text,
+                'tema' => '',
                 'text' => $text,
                 'data_otpravki' => date('Y-m-d'),
                 'date_server' => date("Y-m-d H:i:s"),
