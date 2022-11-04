@@ -125,9 +125,6 @@ class JournalController extends Controller
             $chetvert = $currentChetvert;
             $isCurrentChetvert = true;
         }
-        if ($date) {
-
-        }
         $canMark = $currentChetvert >= $chetvert ? true : false;
 
         return [
