@@ -93,25 +93,14 @@ class JournalRepository
         $chetvertDates = config('mektep_config.chetvert');
         $holidays = config('mektep_config.holidays');
         if (!$date) {
-            if($isCurrentChetvert) {
-                $diary = $this->diaryModel
-                    ->where('id_predmet', '=', $predmet['id_predmet'])
-                    ->where('date', '>=', $chetvertDates[$chetvert]['start'])
-                    //->where('date', '<=', $chetvertDates[$chetvert]['end'])
-                    ->where('date', '<=', date("Y-m-d"))// заменить на текущую дату date("Y-m-d")
-                    ->orderBy('date', 'desc')
-                    ->first();
-            }
-            else {
-                $diary = $this->diaryModel
-                    ->where('id_predmet', '=', $predmet['id_predmet'])
-                    ->where('date', '>=', $chetvertDates[$chetvert]['start'])
-                    ->where('date', '<=', $chetvertDates[$chetvert]['end'])
-                    //->where('date', '<=', date("Y-m-d"))// заменить на текущую дату date("Y-m-d")
-                    ->orderBy('date', 'desc')
-                    ->first();
-            }
+            $endDate = date("Y-m-d") < $chetvertDates[$chetvert]['end'] ? date("Y-m-d") : $chetvertDates[$chetvert]['end'];
 
+            $diary = $this->diaryModel
+                ->where('id_predmet', '=', $predmet['id_predmet'])
+                ->where('date', '>=', $chetvertDates[$chetvert]['start'])
+                ->where('date', '<=', $endDate)
+                ->orderBy('date', 'desc')
+                ->first();
         }
         else {
             $diary = $this->diaryModel
